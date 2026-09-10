@@ -129,4 +129,4 @@ Semua Controller API harus mengembalikan format JSON konsisten:
    ### G. Print & Scan Layout Rules (QR Card & Scanner)
    - **Print Dimensions:** Komponen cetak QR Card Siswa wajib terkunci secara ketat pada dimensi standar ID Card: 8.5cm x 5.3cm (3.35in x 2.1in) dengan utilitas @media print agar layout tidak terpotong saat dicetak via react-to-print.
 
-   - **Scanner UI:** Komponen pemindai kamera pada SIPERPUS/Web wajib memiliki panduan visual overlay berbentuk kotak fokus dengan indikator animasi scan line.
+   - **Scanner UI:** Komponen pemindai kamera pada SIPERPUS/Web wajib memiliki panduan visual overlay berbentuk kotak fokus dengan indikator animasi scan line
