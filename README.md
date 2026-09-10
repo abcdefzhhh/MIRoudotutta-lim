@@ -90,4 +90,4 @@ Backend RESTful API Sistem Informasi Perpustakaan (SIPERPUS) Madrasah Ibtidaiyah
    ```bash
    php artisan serve
    ```
-   Server akan berjalan di `http://localhost:8000`.
+   Server akan berjalan di `http://localhost:8000`
