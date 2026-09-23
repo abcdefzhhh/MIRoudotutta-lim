@@ -193,7 +193,7 @@ export default function Navbar() {
                 </span>
               </button>
 
-              {/* Dropdown Menu Box */}
+              {/* Dropdown Menu Box — onMouseEnter cancels close timer so moving into panel stays open */}
               {profileDropdownOpen && (
                 <div
                   className="absolute top-full left-0 pt-2 w-72 z-50 animate-in fade-in zoom-in-95 duration-150"

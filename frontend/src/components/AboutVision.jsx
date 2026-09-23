@@ -63,7 +63,7 @@ export default function AboutVision() {
                   Selamat datang kami haturkan kepada bapak, ibu, dan seluruh calon wali santri di lingkungan madrasah tercinta. Kami memandang setiap amanah putra-putri Anda bukan sekadar peserta didik, melainkan titipan suci Ilahi yang harus disemai dengan ilmu yang bermanfaat, pembiasaan akhlakul karimah, serta teladan penuh cinta kasih.
                 </p>
                 <p>
-                  Bersama para asatidz dan pendidik yang ikhlas, kami berikhtiar menghadirkan atmosfer pembelajaran yang aman, islami, dan berwawasan global. Sinergi yang erat antara pihak sekolah dan orang tua adalah kunci utama mengantarkan ananda tumbuh menjadi insan muttaqin yang mandiri, cerdas bernalar, dan berakhlak mulia.
+                  Bersama para asatidz dan pendidik yang ikhlas, kami berikhtiar menghadirkan atmosfer pembelajaran yang aman, islami, dan berwawasan luas. Sinergi yang erat antara pihak sekolah dan orang tua adalah kunci utama mengantarkan ananda tumbuh menjadi Generasi MARHAMAH yang mandiri, berjiwa religi, harmonis dalam interaksi sosial, dan berakhlakul karimah.
                 </p>
               </div>
               <div className="pt-space-md border-t border-border/60 flex flex-wrap items-center justify-between gap-space-md">

@@ -4,16 +4,16 @@ import { useStaggerReveal } from '../hooks/useScrollReveal'
 
 const programs = [
   {
-    title: "Tahfidz & Tahsin Qur'an",
-    desc: "Metode talaqqi bertahap dengan bimbingan asatidz bersanad, target hafalan juz 'Amma tuntas, serta muraja'ah terjadwal setiap pagi.",
+    title: "One Day One Ayat (Tahfidz Juz 'Amma)",
+    desc: "Program unggulan hafalan Al-Qur'an terstruktur kelas 1-6 Juz 'Amma dan QS. Al-Mulk dengan metode talaqqi 4 langkah, muraja'ah, dan ujian tasmi'.",
     image: "https://lh3.googleusercontent.com/aida-public/AB6AXuC11OoNNfMTQw4KSD1t0JIbMBmFD0yY_fYTGQSNdI2_OXOovTFAG4kVZtABk4-S_SJ0Sh03bCYnCAsj-02468km3QdO5pUlC0JZdejW7lDMuIAW6CKeHS4SGZIArSZGWTGXHJCfKwZkeVJTO-f3kK-xgPlNYyp8US4OqVunHJb9vmnwIFouc7U3x8wRbD4D2NfSYPbJ90MgeXaSjmj1AGTMtSm8zmRaB2COp6FITjdSatV-4KISBdwKuA",
-    alt: "Santri menghafal Al-Qur'an",
+    alt: "Santri menghafal Al-Qur'an Program One Day One Ayat",
   },
   {
-    title: "Pembiasaan Akhlak & Ibadah",
-    desc: "Sholat Dhuha dan Dhuhur berjamaah, hafalan doa-doa harian, asmaul husna, serta pembiasaan keteladanan adab santun kepada guru dan orang tua.",
+    title: "Pembiasaan Adab & Nilai MARHAMAH",
+    desc: "Pembudayaan kalimat thayyibah harian, salat dhuha & zuhur berjamaah, kemandirian belajar, dan penguatan 5 nilai luhur budaya madrasah.",
     image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDMfA40JMXuQgp9jqUFuIyzt8Ah6vescFvm2a9kxx7yhMNvbmaZyLwI962eX1izD2ZHMs2e6ekXiCW7_d3Y5gyr54PZUmA5tPxBCk2RgTur3luPy4nakBoe4kjQRag00qkPoWTSNQzA1vSFC51lNpJtIqqce1Fx0Haam9yq1LgBHtyfs81o-webTOAZ1PHROloNUhJY4-mC6HOntuWMYAEVp24USUeycFdYIV8nbZhXEEIBZ8_bzBHwtg",
-    alt: "Pembiasaan Akhlak dan Sholat",
+    alt: "Pembiasaan Akhlak dan Sholat Berjamaah",
   },
   {
     title: "Dwi-Bahasa: Arab & Inggris",

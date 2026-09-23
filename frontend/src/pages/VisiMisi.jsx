@@ -11,69 +11,75 @@ export default function VisiMisi() {
   const misiList = [
     {
       num: '01',
-      title: 'Pendidikan Aqidah & Akhlakul Karimah',
-      desc: 'Menyelenggarakan pendidikan karakter berlandaskan aqidah yang lurus, adab islami sehari-hari, pembiasaan sholat berjamaah, dan doa harian sejak dini.',
-      icon: 'verified_user',
+      title: 'Membina Kemandirian Belajar',
+      desc: 'Membina kemandirian peserta didik melalui kegiatan pembelajaran yang aktif, kreatif, dan menyenangkan agar menjadi pembelajar sepanjang hayat.',
+      icon: 'psychology',
     },
     {
       num: '02',
-      title: 'Tahfidz & Tartil Al-Qur\'an',
-      desc: 'Membimbing ananda mencintai, membaca dengan makhraj dan tajwid yang benar (tahsin), serta menghafal Al-Qur\'an minimal Juz 30 dan surat-surat pilihan.',
-      icon: 'menu_book',
+      title: 'Budaya Kalimat Thayyibah',
+      desc: 'Memajang dan membiasakan pengucapan kalimat-kalimat thayyibah dalam tutur kata santri sehari-hari di lingkungan madrasah.',
+      icon: 'record_voice_over',
     },
     {
       num: '03',
-      title: 'Kurikulum Integratif Berpusat Pada Anak',
-      desc: 'Memadukan Kurikulum Nasional (Merdeka) dengan muatan keagamaan madrasah secara seimbang, bermakna, dan menyenangkan bagi tumbuh kembang siswa.',
-      icon: 'auto_stories',
+      title: 'Harmoni Interaksi Agama & Sosial',
+      desc: 'Menciptakan suasana interaksi antarsiswa dan warga madrasah yang berlandaskan nilai-nilai luhur agama Islam dan etika sosial yang harmonis.',
+      icon: 'diversity_3',
     },
     {
       num: '04',
-      title: 'Literasi, Numerasi & Sains Terapan',
-      desc: 'Membekali siswa dengan nalar kritis, kemampuan berbahasa (Arab & Inggris), kecakapan numerasi, dan pemahaman sains melalui eksperimen langsung.',
-      icon: 'science',
-    },
-    {
-      num: '05',
-      title: 'Lingkungan Madrasah Asri & Inklusif',
-      desc: 'Mewujudkan ekosistem madrasah yang bersih, hijau, ramah anak, bebas perundungan, dan menumbuhkan rasa persaudaraan serta kepedulian sosial.',
-      icon: 'diversity_3',
+      title: 'Pembiasaan Perilaku Terpuji',
+      desc: 'Menjadikan kegiatan-kegiatan pembiasaan ibadah harian dan akhlakul karimah sebagai fondasi utama dalam pembentukan karakter santri.',
+      icon: 'verified_user',
     },
   ]
 
   const tujuanList = [
     {
-      label: 'Spiritual & Karakter Mandiri',
-      detail: 'Lulusan memiliki kebiasaan ibadah harian mandiri, berbakti kepada orang tua, serta menjunjung tinggi sopan santun dan kejujuran.',
-      icon: 'favorite',
-      badge: 'Spiritualitas',
+      label: 'Budaya Madrasah yang Religi',
+      detail: 'Mengembangkan budaya madrasah yang bernuansa religi melalui pembiasaan ibadah terpadu, salat berjamaah, dan tadarus harian.',
+      icon: 'mosque',
+      badge: 'Religius',
     },
     {
-      label: 'Standar Tahfidz Al-Qur\'an',
-      detail: 'Tuntas menghafal minimal Juz 30 dengan bacaan tartil terstandarisasi, mahir melafalkan surat-surat pilihan, dan menguasai dasar tajwid.',
+      label: 'Media Pembelajaran Keagamaan',
+      detail: 'Memanfaatkan momen-momen dan peringatan hari besar keagamaan sebagai sarana dan media pembelajaran kontekstual yang bermakna.',
       icon: 'menu_book',
-      badge: 'Al-Qur\'an',
+      badge: 'Pembelajaran',
     },
     {
-      label: 'Kecakapan Akademik & Sains',
-      detail: 'Memiliki nalar ilmiah yang kritis, kecakapan literasi numerasi, dasar dwibahasa (Arab & Inggris), dan siap bersaing di jenjang MTs/SMP unggulan.',
-      icon: 'psychology',
-      badge: 'Akademik',
+      label: 'Silaturahmi dengan Stakeholder',
+      detail: 'Menjalin silaturahmi yang erat dan transparan bersama orang tua murid serta segenap pemangku kepentingan demi kemajuan pendidikan.',
+      icon: 'family_restroom',
+      badge: 'Kemitraan',
     },
     {
-      label: 'Bakat, Seni & Kepemimpinan',
-      detail: 'Percaya diri mengekspresikan bakat seni islami (hadrah/kaligrafi), ketangkasan kepanduan Pramuka, sportivitas olahraga, dan kepemimpinan tim.',
-      icon: 'emoji_events',
-      badge: 'Bakat & Minat',
+      label: 'Pemberdayaan Potensi SDM',
+      detail: 'Memberdayakan sumber daya manusia dewan asatidz dan tenaga kependidikan secara optimal sesuai kompetensi dan kapabilitasnya.',
+      icon: 'groups',
+      badge: 'SDM Unggul',
+    },
+    {
+      label: 'Pendidikan Karakter & Sosial',
+      detail: 'Menyelenggarakan berbagai kegiatan sosial yang menjadi bagian tak terpisahkan dari penguatan pendidikan karakter bangsa (PPK).',
+      icon: 'volunteer_activism',
+      badge: 'Sosial',
+    },
+    {
+      label: 'Kerja Sama Antar-Lembaga',
+      detail: 'Menjalin kemitraan dan kerja sama sinergis dengan berbagai lembaga pendidikan dan instansi dalam merealisasikan program madrasah.',
+      icon: 'handshake',
+      badge: 'Kolaborasi',
     },
   ]
 
   const visiTags = [
-    'Bertaqwa kepada Allah SWT',
-    'Berakhlak Mulia & Santun',
-    'Unggul Sains & Literasi',
-    'Berhati Qur\'ani',
-    'Peduli Lingkungan & Asri',
+    'Mandiri dalam Belajar',
+    'Terbiasa Kata-Kata Islami',
+    'Keharmonisan Interaksi',
+    'Perbuatan Terpuji Sehari-hari',
+    'Cinta & Peduli Lingkungan',
   ]
 
   return (
@@ -152,13 +158,13 @@ export default function VisiMisi() {
                 </div>
 
                 <p className="font-heading text-xl sm:text-2xl text-ink font-bold leading-relaxed pt-1">
-                  “Terwujudnya Generasi Muslim yang Bertaqwa, Berakhlakul Karimah, Unggul dalam Ilmu Pengetahuan, Berwawasan Lingkungan, dan Berlandaskan Al-Qur'an serta As-Sunnah.”
+                  “Terwujudnya Generasi MARHAMAH (Mandiri, Religi, Harmoni, dan Berakhlakul Karimah)”
                 </p>
               </div>
 
               <div className="mt-6 pt-5 border-t border-border/70">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-deep block mb-2.5">
-                  5 Pilar Pengikat Visi Madrasah:
+                  5 Indikator Pencapaian Visi Madrasah:
                 </span>
                 <div className="flex flex-wrap gap-2">
                   {visiTags.map((tag) => (
@@ -180,14 +186,14 @@ export default function VisiMisi() {
         <section>
           <div className="max-w-2xl mb-8">
             <h2 className="text-2xl sm:text-3xl font-heading font-bold text-emerald-deep">
-              5 Misi Pokok Madrasah
+              4 Misi Pokok Madrasah
             </h2>
             <p className="text-sm text-ink-soft mt-1">
               Ikhtiar konkrit dan terarah yang kami terapkan dalam kegiatan belajar mengajar serta pembiasaan karakter ananda sehari-hari.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" ref={misiGridRef}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6" ref={misiGridRef}>
             {misiList.map((misi) => (
               <div
                 key={misi.num}
@@ -211,28 +217,6 @@ export default function VisiMisi() {
                 </div>
               </div>
             ))}
-
-            {/* Extra Commitment Card (6th Card) */}
-            <div className="reveal-child bg-gradient-to-br from-emerald-deep to-emerald-leaf rounded-2xl p-6 sm:p-7 text-white flex flex-col justify-between shadow-xs relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-48 h-48 bg-gold/10 rounded-full blur-2xl pointer-events-none"></div>
-
-              <div className="relative z-10">
-                <div className="w-11 h-11 rounded-xl bg-white/15 text-gold flex items-center justify-center mb-5 backdrop-blur-xs">
-                  <span className="material-symbols-outlined text-[24px]">auto_awesome</span>
-                </div>
-                <h3 className="text-base sm:text-lg font-heading font-bold text-white mb-2">
-                  Komitmen Mutu &amp; Integritas
-                </h3>
-                <p className="text-xs sm:text-sm text-emerald-50/90 leading-relaxed font-body">
-                  Pendidikan dasar adalah fondasi pembentukan jiwa. Setiap santri didampingi dengan penuh ketulusan, kesabaran, dan keteladanan budi pekerti dewan guru.
-                </p>
-              </div>
-
-              <div className="mt-6 pt-4 border-t border-white/20 flex items-center justify-between text-xs relative z-10">
-                <span className="text-gold font-bold">MI Roudotutta'lim</span>
-                <span className="text-emerald-100 font-medium">Batujajar Barat</span>
-              </div>
-            </div>
           </div>
         </section>
 
@@ -240,14 +224,14 @@ export default function VisiMisi() {
         <section className="bg-ivory-2 rounded-2xl border border-border/80 p-8 lg:p-10 shadow-xs" ref={tujuanRef}>
           <div className="max-w-2xl mb-8">
             <h2 className="text-2xl sm:text-3xl font-heading font-bold text-emerald-deep">
-              Profil &amp; Standar Kompetensi Lulusan
+              Tujuan Kelembagaan &amp; Pendidikan Madrasah
             </h2>
             <p className="text-sm text-ink-soft mt-1 leading-relaxed">
-              Empat dimensi kompetensi utama yang tertanam kuat pada setiap peserta didik setelah menuntaskan masa belajar di MI Roudotutta'lim:
+              Enam tujuan strategis MI Roudotutta'lim sebagai penjabaran visi dan misi dalam membentuk insan berilmu, bertakwa, dan berakhlakul karimah:
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {tujuanList.map((item, idx) => (
               <div
                 key={idx}

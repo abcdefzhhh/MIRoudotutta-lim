@@ -5,33 +5,33 @@ import useScrollReveal, { useStaggerReveal } from '../hooks/useScrollReveal'
 const values = [
   {
     num: "01",
-    title: "Ikhlas",
-    desc: "Bekerja, mendidik, dan menuntut ilmu semata mencari ridho Ilahi dan kemanfaatan ummat.",
-    icon: "loyalty",
+    title: "Religius",
+    desc: "Mencerminkan keberimanan & ketakwaan melalui salat dhuha & zuhur berjamaah, tadarus Al-Qur'an harian, dan akhlakul karimah.",
+    icon: "mosque",
   },
   {
     num: "02",
-    title: "Amanah",
-    desc: "Menjaga titipan kepercayaan orang tua dengan integritas, transparansi, dan tanggung jawab penuh.",
+    title: "Integritas",
+    desc: "Komitmen keselarasan pikiran, perkataan, dan perbuatan dengan budaya kejujuran, kantin kejujuran, dan pembiasaan anti-menyontek.",
     icon: "verified",
   },
   {
     num: "03",
-    title: "Berakhlak",
-    desc: "Menjadikan adab, sopan santun, dan keteladanan salafus shalih sebagai mahkota setiap tindakan.",
-    icon: "spa",
+    title: "Mandiri",
+    desc: "Menumbuhkan percaya diri tanpa bergantung pada orang lain, menjadi pembelajar aktif, berani mencoba, serta kreatif di Kurikulum Merdeka.",
+    icon: "psychology",
   },
   {
     num: "04",
-    title: "Berilmu",
-    desc: "Mengobarkan semangat haus ilmu, kritis bernalar, serta gigih mengamalkan apa yang dipelajari.",
-    icon: "auto_stories",
+    title: "Gotong Royong",
+    desc: "Menghargai kerja sama dan bahu-membahu melalui kerja kelompok, piket kelas, kebersihan lingkungan, empati, dan saling menolong.",
+    icon: "diversity_3",
   },
   {
     num: "05",
-    title: "Kebersamaan",
-    desc: "Membangun ukhuwah islamiyah dan kehangatan rasa persaudaraan antar warga madrasah.",
-    icon: "diversity_3",
+    title: "Nasionalisme",
+    desc: "Mengutamakan bangsa & negara lewat upacara bendera, toleransi kebinekaan global, kearifan lokal, serta projek P5RA.",
+    icon: "flag",
   },
 ]
 
