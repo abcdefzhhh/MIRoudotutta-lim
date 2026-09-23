@@ -2,7 +2,8 @@ import { Link } from 'react-router-dom'
 import eskulBg from '../assets/eskul.jpg'
 import hadrahImg from '../assets/eskul-hadrah.jpg'
 import futsalImg from '../assets/eskul-futsal.jpg'
-import kaligrafiImg from '../assets/eskul-kaligrafi.jpg'
+import silatImg from '../assets/eskul-silat.jpg'
+import paskibraImg from '../assets/eskul-paskibra.jpg'
 import useScrollReveal, { useStaggerReveal } from '../hooks/useScrollReveal'
 
 export default function Ekstrakurikuler() {
@@ -12,74 +13,64 @@ export default function Ekstrakurikuler() {
 
   const activities = [
     {
-      title: 'Pramuka Siaga & Penggalang',
-      category: 'Kepanduan & Karakter',
-      schedule: 'Setiap Jumat Sore',
-      desc: 'Melatih kemandirian, kedisiplinan, tali-temali, pertolongan pertama, kepedulian sosial, dan kecintaan pada alam dalam bingkai adab islami.',
-      icon: 'explore',
-      badgeColor: 'bg-emerald-deep text-white',
-      image: eskulBg,
-      alt: 'Kegiatan Pramuka Siswa MI Roudotutta\'lim',
-    },
-    {
-      title: 'Tahfidz Club & Seni Tilawah',
+      title: 'Tahfidz Club & Tilawah',
       category: 'Keagamaan & Al-Qur\'an',
       schedule: 'Selasa & Kamis Sore',
-      desc: 'Penguatan muraja\'ah juz amma, pendalaman makharijul huruf, dan pembelajaran nagham (irama tilawah tartil) untuk persiapan musabaqah/khotmil Qur\'an.',
+      desc: 'Penguatan muraja\'ah Juz \'Amma, pendalaman makharijul huruf, dan pembelajaran irama tartil untuk persiapan tasmi\' dan khotmil Qur\'an bersama dewan asatidz.',
       icon: 'menu_book',
       badgeColor: 'bg-gold text-ink font-semibold',
       image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC11OoNNfMTQw4KSD1t0JIbMBmFD0yY_fYTGQSNdI2_OXOovTFAG4kVZtABk4-S_SJ0Sh03bCYnCAsj-02468km3QdO5pUlC0JZdejW7lDMuIAW6CKeHS4SGZIArSZGWTGXHJCfKwZkeVJTO-f3kK-xgPlNYyp8US4OqVunHJb9vmnwIFouc7U3x8wRbD4D2NfSYPbJ90MgeXaSjmj1AGTMtSm8zmRaB2COp6FITjdSatV-4KISBdwKuA',
       alt: 'Santri menghafal Al-Qur\'an dan seni tilawah',
     },
     {
-      title: 'Seni Rebana & Hadrah',
-      category: 'Seni & Budaya Islam',
-      schedule: 'Setiap Sabtu Pagi',
-      desc: 'Mengenalkan kecintaan pada sholawat nabi melalui kesenian hadrah klasik, melatih kepekaan ritme, kekompakan tim, dan ekspresi seni islami.',
-      icon: 'music_note',
-      badgeColor: 'bg-emerald-leaf text-white',
-      image: hadrahImg,
-      alt: 'Siswa bermain hadrah rebana di madrasah',
-    },
-    {
-      title: 'Futsal & Olahraga Kebugaran',
+      title: 'Futsal & Olahraga',
       category: 'Olahraga & Sportivitas',
       schedule: 'Setiap Sabtu Pagi',
-      desc: 'Menyalurkan energi positif, melatih ketahanan fisik, koordinasi motorik, sportivitas, serta kerjasama tim di lapangan olahraga madrasah.',
+      desc: 'Menyalurkan energi positif, melatih ketahanan fisik, koordinasi motorik, sportivitas, serta kerjasama tim yang solid di lapangan olahraga madrasah.',
       icon: 'sports_soccer',
       badgeColor: 'bg-emerald-leaf-soft text-white',
       image: futsalImg,
       alt: 'Anak-anak bermain futsal di lapangan sekolah',
     },
     {
-      title: 'Arabic & English Fun Club',
-      category: 'Pengembangan Bahasa',
-      schedule: 'Setiap Rabu Sore',
-      desc: 'Membangun keberanian Siswa berbicara bahasa Arab dan Inggris melalui permainan interaktif, nyanyian edukatif, kosa kata harian, dan storytelling.',
-      icon: 'translate',
-      badgeColor: 'bg-emerald-deep text-white',
-      image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCP5bV2Z483NJLeR1f-8BzMeD-GnCxwJ-qAaJsljLEeUp2zNMpVlzH-weyFUA5Hs3xFHkIBl-LxSZU45FW3Sp0S5C2zgwHPcG1jS7oY5MkImZIj_nYRzyohWiYjz72irVVpTDcGcu0o45Wjrf5Mwd5ARLgZwMSuB5YATXDQttaft8Z96_G3fGix78rFy86gSSsTDS_VS42X-uGI07Xa7n3WkvgCiOqB0qAjYRgc0fUFlvd2KxcBdr6rmw',
-      alt: 'Pembelajaran bahasa Arab dan Inggris interaktif',
-    },
-    {
-      title: 'Seni Kaligrafi Islam (Khat)',
-      category: 'Seni Rupa & Estetika',
-      schedule: 'Setiap Kamis Sore',
-      desc: 'Melatih ketelitian, ketenangan, dan kesabaran Siswa dalam menggoreskan pena kaligrafi gaya Naskhi dan Tsuluts untuk menulis ayat-ayat suci.',
-      icon: 'draw',
-      badgeColor: 'bg-gold text-ink font-semibold',
-      image: kaligrafiImg,
-      alt: 'Siswa menulis kaligrafi Arab dengan pena bambu',
-    },
-    {
-      title: 'Sains Cilik & Eksperimen Alam',
-      category: 'Sains & Teknologi',
+      title: 'Pencak Silat',
+      category: 'Bela Diri & Karakter',
       schedule: 'Setiap Sabtu Pagi',
-      desc: 'Eksperimen ilmiah sederhana yang memantik rasa ingin tahu Siswa tentang hukum alam, daur ulang ramah lingkungan, dan logika sains dasar.',
-      icon: 'biotech',
+      desc: 'Membekali siswa dengan kemampuan bela diri khas nusantara, melatih kedisiplinan, keberanian, kekuatan fisik, dan mental pantang menyerah dalam bingkai sportivitas islami.',
+      icon: 'sports_martial_arts',
+      badgeColor: 'bg-emerald-deep text-white',
+      image: silatImg,
+      alt: 'Siswa berlatih pencak silat di halaman madrasah',
+    },
+    {
+      title: 'Seni Hadroh & Rebana',
+      category: 'Seni & Budaya Islam',
+      schedule: 'Setiap Sabtu Pagi',
+      desc: 'Mengenalkan kecintaan pada sholawat nabi melalui kesenian hadrah klasik, melatih kepekaan ritme, kekompakan tim, dan ekspresi seni islami yang merdu.',
+      icon: 'music_note',
       badgeColor: 'bg-emerald-leaf text-white',
-      image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA5zfyUe4aeo7HYLh_CS6TobN1j36Rca2USFuwtFIP8aA8rN6y-MWiSm6e8pIEsDs9C2uICpEF1_qpD5bodTVhwl4tjLCKaGKPGOKXn4hAIIwQjDrQvXBsW23xcMyVJhg7lEr09kj13ZGXUhnht5WRR8LGYHVnCrpgQO0haOTDDWtvmcy5PXkAoS4kKawNGlOpuNssiYGewGO9PBVA3pXS698v_AeXirbw0pqU5gxbZtRR73QnnCt5NeA',
-      alt: 'Eksperimen sains sederhana siswa madrasah',
+      image: hadrahImg,
+      alt: 'Siswa bermain hadrah rebana di madrasah',
+    },
+    {
+      title: 'Pramuka Siaga & Penggalang',
+      category: 'Kepanduan & Karakter',
+      schedule: 'Setiap Jumat Sore',
+      desc: 'Melatih kemandirian, kedisiplinan, tali-temali, pertolongan pertama, kepedulian sosial, dan kecintaan pada alam dalam bingkai semangat kepanduan dan adab islami.',
+      icon: 'explore',
+      badgeColor: 'bg-emerald-deep text-white',
+      image: eskulBg,
+      alt: 'Kegiatan Pramuka Siswa MI Roudotutta\'lim',
+    },
+    {
+      title: 'Paskibra',
+      category: 'Nasionalisme & Kedisiplinan',
+      schedule: 'Setiap Jumat Sore',
+      desc: 'Membentuk siswa berjiwa patriot, penuh rasa cinta tanah air, dan berkedisiplinan tinggi melalui latihan baris-berbaris, pengibaran bendera, dan upacara resmi madrasah.',
+      icon: 'flag',
+      badgeColor: 'bg-gold text-ink font-semibold',
+      image: paskibraImg,
+      alt: 'Siswa paskibra berlatih pengibaran bendera',
     },
   ]
 
@@ -131,7 +122,7 @@ export default function Ekstrakurikuler() {
           </div>
           <div className="flex items-center gap-6 shrink-0 border-t md:border-t-0 md:border-l border-border pt-4 md:pt-0 md:pl-6 text-xs text-ink-soft">
             <div>
-              <span className="block font-heading font-bold text-xl text-emerald-deep">7 Pilihan</span>
+              <span className="block font-heading font-bold text-xl text-emerald-deep">6 Pilihan</span>
               Ekskul Aktif
             </div>
             <div>
