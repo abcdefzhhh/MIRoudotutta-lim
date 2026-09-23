@@ -203,8 +203,11 @@
 .print-sheet-grid {
   display: contents;
 }
+.print-book-label-grid {
+  display: contents;
+}
 
-/* Print styles for Student QR Card (8.5cm x 5.3cm standard) */
+/* Print styles for Student QR Card (8.5cm x 5.3cm standard) & Book Labels (8.5cm x 4.6cm) */
 @media print {
   @page {
     size: A4 portrait;
@@ -274,6 +277,7 @@
     break-after: avoid !important;
   }
 
+  /* Student Card Grid (2 cols x 4 rows = 8 cards) */
   .print-sheet-grid {
     display: grid !important;
     grid-template-columns: repeat(2, 8.5cm) !important;
@@ -287,8 +291,23 @@
     padding: 0 !important;
   }
 
-  /* No visual resets here — let StudentQrCard's own inline styles render as-is */
-  .print-card-item {
+  /* Book Sticker Label Grid (2 cols x 5 rows = 10 stickers) */
+  .print-book-label-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 8.5cm) !important;
+    grid-template-rows: repeat(5, 4.6cm) !important;
+    column-gap: 8mm !important;
+    row-gap: 5mm !important;
+    justify-content: center !important;
+    align-content: start !important;
+    width: fit-content !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+  }
+
+  /* Card and Sticker print item properties */
+  .print-card-item,
+  .print-book-label-item {
     page-break-inside: avoid !important;
     break-inside: avoid !important;
     -webkit-print-color-adjust: exact !important;

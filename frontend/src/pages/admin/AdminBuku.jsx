@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import { QRCodeSVG } from 'qrcode.react'
+import BatchBookLabelsModal from '../../components/BatchBookLabelsModal'
 
 export default function AdminBuku() {
   const [books, setBooks] = useState([])
@@ -13,6 +15,8 @@ export default function AdminBuku() {
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
   const [isCopiesOpen, setIsCopiesOpen] = useState(false)
+  const [isLabelsModalOpen, setIsLabelsModalOpen] = useState(false)
+  const [selectedBookForLabel, setSelectedBookForLabel] = useState('all')
   const [selectedBook, setSelectedBook] = useState(null)
   const [submitting, setSubmitting] = useState(false)
 
@@ -187,24 +191,39 @@ export default function AdminBuku() {
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={() => {
-            setFormData({
-              isbn: '',
-              kodebuku: '',
-              judul: '',
-              penulis: '',
-              penerbit: '',
-              stok: 1,
-            })
-            setIsCreateOpen(true)
-          }}
-          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs sm:text-sm shadow-xs transition-all active:scale-[0.98]"
-        >
-          <span className="material-symbols-outlined text-[18px]">add_circle</span>
-          <span>+ Tambah Judul Buku Baru</span>
-        </button>
+        <div className="flex items-center gap-2.5">
+          <button
+            type="button"
+            onClick={() => {
+              setSelectedBookForLabel('all')
+              setIsLabelsModalOpen(true)
+            }}
+            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-emerald-600 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-semibold text-xs sm:text-sm transition-all active:scale-[0.98]"
+            title="Cetak Stiker Label Buku A4"
+          >
+            <span className="material-symbols-outlined text-[18px]">label</span>
+            <span>Cetak Stiker Label ISBN &amp; QR</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setFormData({
+                isbn: '',
+                kodebuku: '',
+                judul: '',
+                penulis: '',
+                penerbit: '',
+                stok: 1,
+              })
+              setIsCreateOpen(true)
+            }}
+            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs sm:text-sm shadow-xs transition-all active:scale-[0.98]"
+          >
+            <span className="material-symbols-outlined text-[18px]">add_circle</span>
+            <span>+ Tambah Judul Baru</span>
+          </button>
+        </div>
       </div>
 
       {/* Table Card */}
@@ -313,12 +332,28 @@ export default function AdminBuku() {
                           type="button"
                           onClick={() => openCopiesModal(b)}
                           className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-semibold bg-indigo-50 text-indigo-700 hover:bg-indigo-600 hover:text-white border border-indigo-200 transition-colors"
-                          title="Lihat Barcode Eksemplar Fisik"
+                          title="Lihat Barcode & Eksemplar Fisik"
                         >
                           <span className="material-symbols-outlined text-[15px]">
                             qr_code_scanner
                           </span>
                           <span>Eksemplar</span>
+                        </button>
+
+                        {/* Print Single Book Stickers */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectedBookForLabel(b.idbuku)
+                            setIsLabelsModalOpen(true)
+                          }}
+                          className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white border border-emerald-200 transition-colors"
+                          title="Cetak Stiker Label ISBN & QR Buku Ini"
+                        >
+                          <span className="material-symbols-outlined text-[15px]">
+                            label
+                          </span>
+                          <span>Stiker QR</span>
                         </button>
 
                         {/* Edit */}
@@ -357,14 +392,22 @@ export default function AdminBuku() {
       {isCopiesOpen && selectedBook && (
         <div className="fixed inset-0 z-[100] bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto animate-fade-in">
           <div className="relative w-full max-w-lg bg-white rounded-2xl border border-slate-200 shadow-2xl p-6 space-y-4 my-auto animate-modal-pop">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div className="flex items-start justify-between pb-3 border-b border-slate-100 gap-3">
               <div>
                 <h3 className="font-bold text-base text-slate-900">
-                  Eksemplar Fisik &amp; Barcode Buku
+                  Eksemplar Fisik &amp; QR Code Buku
                 </h3>
-                <p className="text-xs text-slate-500 line-clamp-1 mt-0.5">
+                <p className="text-xs text-slate-600 line-clamp-1 mt-0.5 font-medium">
                   {selectedBook.judul}
                 </p>
+                <div className="flex items-center gap-2 mt-1.5">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                    ISBN: {selectedBook.isbn}
+                  </span>
+                  <span className="text-[11px] text-slate-500">
+                    Kode: {selectedBook.kodebuku} &middot; {selectedBook.stok} Eksemplar
+                  </span>
+                </div>
               </div>
               <button
                 onClick={() => setIsCopiesOpen(false)}
@@ -375,32 +418,42 @@ export default function AdminBuku() {
             </div>
 
             <div className="text-xs text-slate-500">
-              Setiap buku fisik memiliki barcode unik yang dipindai saat sirkulasi peminjaman/pengembalian:
+              Setiap buku fisik memiliki barcode/QR unik yang dipindai saat sirkulasi peminjaman &amp; pengembalian:
             </div>
 
-            <div className="max-h-60 overflow-y-auto divide-y divide-slate-100 border border-slate-200 rounded-xl">
+            <div className="max-h-72 overflow-y-auto divide-y divide-slate-100 border border-slate-200 rounded-xl">
               {selectedBook.details && selectedBook.details.length > 0 ? (
                 selectedBook.details.map((copy, i) => (
                   <div
                     key={copy.idbukudetail || i}
-                    className="p-3 flex items-center justify-between text-xs hover:bg-slate-50"
+                    className="p-3 flex items-center justify-between text-xs hover:bg-slate-50 gap-3"
                   >
-                    <div className="flex items-center gap-2.5">
-                      <span className="material-symbols-outlined text-slate-400 text-[18px]">
-                        qr_code_2
-                      </span>
+                    <div className="flex items-center gap-3">
+                      {/* Visual QR Code Thumbnail */}
+                      <div className="p-1 bg-white border border-slate-200 rounded-lg shadow-2xs shrink-0 flex items-center justify-center">
+                        <QRCodeSVG
+                          value={`BUKU-${selectedBook.isbn || ''}-${copy.kodebukudetail}`}
+                          size={40}
+                          level="M"
+                        />
+                      </div>
                       <div>
-                        <span className="font-mono font-bold text-slate-900">
-                          {copy.kodebukudetail}
-                        </span>
-                        <span className="text-slate-400 block text-[11px]">
-                          Salinan ke-{i + 1}
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-mono font-bold text-slate-900 text-xs">
+                            {copy.kodebukudetail}
+                          </span>
+                          <span className="text-[10px] text-slate-400 font-mono">
+                            (Salinan #{i + 1})
+                          </span>
+                        </div>
+                        <span className="text-slate-500 block text-[11px] mt-0.5 font-mono">
+                          Format Scan: BUKU-{selectedBook.isbn}-{copy.kodebukudetail}
                         </span>
                       </div>
                     </div>
 
                     <span
-                      className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold capitalize ${
+                      className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold capitalize shrink-0 ${
                         copy.kondisi === 'baik'
                           ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                           : copy.kondisi === 'rusak'
@@ -419,7 +472,20 @@ export default function AdminBuku() {
               )}
             </div>
 
-            <div className="pt-2 flex justify-end">
+            <div className="pt-2 flex items-center justify-between border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedBookForLabel(selectedBook.idbuku)
+                  setIsCopiesOpen(false)
+                  setIsLabelsModalOpen(true)
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-2xs transition-all active:scale-[0.98]"
+              >
+                <span className="material-symbols-outlined text-[16px]">print</span>
+                <span>Cetak Stiker Label Buku Ini</span>
+              </button>
+
               <button
                 type="button"
                 onClick={() => setIsCopiesOpen(false)}
@@ -706,6 +772,13 @@ export default function AdminBuku() {
           </div>
         </div>
       )}
+      {/* MODAL: BATCH BOOK LABELS PRINT (A4) */}
+      <BatchBookLabelsModal
+        isOpen={isLabelsModalOpen}
+        onClose={() => setIsLabelsModalOpen(false)}
+        books={books}
+        initialSelectedBookId={selectedBookForLabel}
+      />
     </div>
   )
 }
