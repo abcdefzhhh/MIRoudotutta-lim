@@ -125,3 +125,20 @@ Route::put('/berita/{id}', [BeritaController::class, 'update']);
 Route::post('/berita/{id}', [BeritaController::class, 'update']);
 Route::delete('/berita/{id}', [BeritaController::class, 'destroy']);
 
+
+// Layanan Sirkulasi Mobile SIPERPUS (Barcode Scanner & Mobile Service)
+use App\Http\Controllers\Api\SiperpusApiController;
+
+Route::prefix('siperpus')->group(function () {
+    Route::post('/buku/{kode}/kondisi', [SiperpusApiController::class, 'updateKondisiBuku']);
+
+    Route::get('/scan/siswa/{nis}', [SiperpusApiController::class, 'scanSiswa']);
+    Route::get('/scan/buku/{kode}', [SiperpusApiController::class, 'scanBuku']);
+    Route::post('/pinjam', [SiperpusApiController::class, 'submitPeminjaman']);
+    Route::get('/scan/kembali/{kode}', [SiperpusApiController::class, 'scanPengembalian']);
+    Route::post('/kembali', [SiperpusApiController::class, 'submitPengembalian']);
+    Route::get('/statistik', [SiperpusApiController::class, 'getStatistik']);
+    Route::get('/riwayat', [SiperpusApiController::class, 'getRiwayat']);
+    Route::post('/kunjungan', [SiperpusApiController::class, 'recordKunjungan']);
+    Route::get('/kunjungan/hari-ini', [SiperpusApiController::class, 'getKunjunganHariIni']);
+});

@@ -14,7 +14,7 @@ class GuruController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $query = Guru::query();
+        $query = Guru::with(['kelasDetails.kelas']);
 
         if ($request->filled('search')) {
             $s = $request->search;

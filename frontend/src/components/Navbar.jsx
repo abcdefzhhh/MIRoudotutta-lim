@@ -12,6 +12,7 @@ export default function Navbar() {
   const location = useLocation()
   const isHomePage = location.pathname === '/'
   const dropdownRef = useRef(null)
+  const dropdownTimeoutRef = useRef(null)
 
   const profileSubItems = [
     {
@@ -45,6 +46,33 @@ export default function Navbar() {
     { name: 'Kontak', href: '/kontak', id: 'kontak' },
   ]
 
+  // Dropdown hover helpers with grace period buffer
+  const handleDropdownMouseEnter = () => {
+    if (dropdownTimeoutRef.current) {
+      clearTimeout(dropdownTimeoutRef.current)
+      dropdownTimeoutRef.current = null
+    }
+    setProfileDropdownOpen(true)
+  }
+
+  const handleDropdownMouseLeave = () => {
+    if (dropdownTimeoutRef.current) {
+      clearTimeout(dropdownTimeoutRef.current)
+    }
+    dropdownTimeoutRef.current = setTimeout(() => {
+      setProfileDropdownOpen(false)
+    }, 200)
+  }
+
+  const handleDropdownToggle = (e) => {
+    e.preventDefault()
+    if (dropdownTimeoutRef.current) {
+      clearTimeout(dropdownTimeoutRef.current)
+      dropdownTimeoutRef.current = null
+    }
+    setProfileDropdownOpen((prev) => !prev)
+  }
+
   // Track scroll position for elevated header styling
   useEffect(() => {
     const handleScroll = () => {
@@ -60,17 +88,22 @@ export default function Navbar() {
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        if (dropdownTimeoutRef.current) clearTimeout(dropdownTimeoutRef.current)
         setProfileDropdownOpen(false)
       }
     }
     document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      if (dropdownTimeoutRef.current) clearTimeout(dropdownTimeoutRef.current)
+    }
   }, [])
 
   // Close menus on Esc
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
+        if (dropdownTimeoutRef.current) clearTimeout(dropdownTimeoutRef.current)
         setMobileMenuOpen(false)
         setProfileDropdownOpen(false)
       }
@@ -81,6 +114,7 @@ export default function Navbar() {
 
   // Close dropdown on route change
   useEffect(() => {
+    if (dropdownTimeoutRef.current) clearTimeout(dropdownTimeoutRef.current)
     setProfileDropdownOpen(false)
     setMobileMenuOpen(false)
   }, [location.pathname])
@@ -133,12 +167,12 @@ export default function Navbar() {
             <div
               ref={dropdownRef}
               className="relative"
-              onMouseEnter={() => setProfileDropdownOpen(true)}
-              onMouseLeave={() => setProfileDropdownOpen(false)}
+              onMouseEnter={handleDropdownMouseEnter}
+              onMouseLeave={handleDropdownMouseLeave}
             >
               <button
                 type="button"
-                onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                onClick={handleDropdownToggle}
                 className={`flex items-center gap-1 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-leaf ${
                   isProfileActive
                     ? 'bg-emerald-deep text-white shadow-sm font-semibold'
@@ -161,58 +195,69 @@ export default function Navbar() {
 
               {/* Dropdown Menu Box */}
               {profileDropdownOpen && (
-                <div className="absolute top-full left-0 mt-2 w-72 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border border-border/80 p-2 z-50 animate-in fade-in zoom-in-95 duration-150">
-                  <div className="px-3 py-1.5 mb-1 text-[11px] font-bold uppercase tracking-wider text-emerald-leaf border-b border-border/40">
-                    Profil Madrasah
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    {profileSubItems.map((sub) => {
-                      const isCurrent = location.pathname === sub.href
-                      return (
-                        <Link
-                          key={sub.name}
-                          to={sub.href}
-                          onClick={() => setProfileDropdownOpen(false)}
-                          className={`flex items-start gap-3 p-2.5 rounded-xl transition-all duration-150 group ${
-                            isCurrent
-                              ? 'bg-emerald-deep text-white'
-                              : 'hover:bg-ivory text-ink'
-                          }`}
-                        >
-                          <div
-                            className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${
+                <div
+                  className="absolute top-full left-0 pt-2 w-72 z-50 animate-in fade-in zoom-in-95 duration-150"
+                  onMouseEnter={handleDropdownMouseEnter}
+                  onMouseLeave={handleDropdownMouseLeave}
+                >
+                  {/* Invisible bridge element to ensure pointer never leaves hover boundary */}
+                  <div className="absolute -top-2 left-0 right-0 h-4 bg-transparent" />
+                  <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border border-border/80 p-2 relative">
+                    <div className="px-3 py-1.5 mb-1 text-[11px] font-bold uppercase tracking-wider text-emerald-leaf border-b border-border/40">
+                      Profil Madrasah
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      {profileSubItems.map((sub) => {
+                        const isCurrent = location.pathname === sub.href
+                        return (
+                          <Link
+                            key={sub.name}
+                            to={sub.href}
+                            onClick={() => {
+                              if (dropdownTimeoutRef.current) clearTimeout(dropdownTimeoutRef.current)
+                              setProfileDropdownOpen(false)
+                            }}
+                            className={`flex items-start gap-3 p-2.5 rounded-xl transition-all duration-150 group ${
                               isCurrent
-                                ? 'bg-white/20 text-white'
-                                : 'bg-emerald-deep/10 text-emerald-deep group-hover:bg-emerald-deep group-hover:text-white transition-colors'
+                                ? 'bg-emerald-deep text-white'
+                                : 'hover:bg-ivory text-ink'
                             }`}
                           >
-                            <span className="material-symbols-outlined text-[20px]">
-                              {sub.icon}
-                            </span>
-                          </div>
-                          <div>
-                            <span
-                              className={`block text-sm font-heading font-semibold leading-tight ${
+                            <div
+                              className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${
                                 isCurrent
-                                  ? 'text-white'
-                                  : 'text-ink group-hover:text-emerald-deep transition-colors'
+                                  ? 'bg-white/20 text-white'
+                                  : 'bg-emerald-deep/10 text-emerald-deep group-hover:bg-emerald-deep group-hover:text-white transition-colors'
                               }`}
                             >
-                              {sub.name}
-                            </span>
-                            <span
-                              className={`block text-xs mt-0.5 leading-snug ${
-                                isCurrent
-                                  ? 'text-emerald-100'
-                                  : 'text-ink-soft'
-                              }`}
-                            >
-                              {sub.desc}
-                            </span>
-                          </div>
-                        </Link>
-                      )
-                    })}
+                              <span className="material-symbols-outlined text-[20px]">
+                                {sub.icon}
+                              </span>
+                            </div>
+                            <div>
+                              <span
+                                className={`block text-sm font-heading font-semibold leading-tight ${
+                                  isCurrent
+                                    ? 'text-white'
+                                    : 'text-ink group-hover:text-emerald-deep transition-colors'
+                                }`}
+                              >
+                                {sub.name}
+                              </span>
+                              <span
+                                className={`block text-xs mt-0.5 leading-snug ${
+                                  isCurrent
+                                    ? 'text-emerald-100'
+                                    : 'text-ink-soft'
+                                }`}
+                              >
+                                {sub.desc}
+                              </span>
+                            </div>
+                          </Link>
+                        )
+                      })}
+                    </div>
                   </div>
                 </div>
               )}
