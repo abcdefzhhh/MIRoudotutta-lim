@@ -51,10 +51,19 @@ class BukuController extends Controller
         $validated['stok_tersedia'] = $validated['stok'];
         $buku = Buku::create($validated);
 
+        // Auto-generate tbl_buku_detail according to stok
+        for ($i = 1; $i <= $buku->stok; $i++) {
+            \App\Models\BukuDetail::create([
+                'idbuku' => $buku->idbuku,
+                'kodebukudetail' => 'BK-' . $buku->idbuku . '-' . str_pad($i, 3, '0', STR_PAD_LEFT),
+                'kondisi' => 'baik',
+            ]);
+        }
+
         return response()->json([
             'success' => true,
-            'message' => 'Buku berhasil ditambahkan.',
-            'data' => $buku,
+            'message' => 'Buku berhasil ditambahkan beserta detail eksemplar fisik.',
+            'data' => $buku->load('details'),
         ], 201);
     }
 
@@ -75,6 +84,75 @@ class BukuController extends Controller
         return response()->json([
             'success' => true,
             'data' => $buku,
+        ]);
+    }
+
+    /**
+     * Update the specified book.
+     */
+    public function update(Request $request, int $id): JsonResponse
+    {
+        $buku = Buku::find($id);
+
+        if (!$buku) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Buku tidak ditemukan.',
+            ], 404);
+        }
+
+        $validated = $request->validate([
+            'isbn' => 'required|string|max:50|unique:tbl_buku,isbn,' . $id . ',idbuku',
+            'kodebuku' => 'required|string|max:50',
+            'judul' => 'required|string|max:255',
+            'penulis' => 'required|string|max:150',
+            'penerbit' => 'required|string|max:150',
+            'stok' => 'required|integer|min:0',
+        ]);
+
+        $diffStok = $validated['stok'] - $buku->stok;
+        $validated['stok_tersedia'] = max(0, $buku->stok_tersedia + $diffStok);
+
+        $buku->update($validated);
+
+        // If stock increased, add more copy details
+        if ($diffStok > 0) {
+            $existingCount = \App\Models\BukuDetail::where('idbuku', $buku->idbuku)->count();
+            for ($i = 1; $i <= $diffStok; $i++) {
+                \App\Models\BukuDetail::create([
+                    'idbuku' => $buku->idbuku,
+                    'kodebukudetail' => 'BK-' . $buku->idbuku . '-' . str_pad($existingCount + $i, 3, '0', STR_PAD_LEFT),
+                    'kondisi' => 'baik',
+                ]);
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Data buku berhasil diperbarui.',
+            'data' => $buku->load('details'),
+        ]);
+    }
+
+    /**
+     * Remove the specified book.
+     */
+    public function destroy(int $id): JsonResponse
+    {
+        $buku = Buku::find($id);
+
+        if (!$buku) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Buku tidak ditemukan.',
+            ], 404);
+        }
+
+        $buku->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Buku berhasil dihapus.',
         ]);
     }
 }

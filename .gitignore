@@ -1,0 +1,13 @@
+# Dependencies & Build
+node_modules/
+vendor/
+
+# Temporary files
+~$*
+.DS_Store
+Thumbs.db
+
+# Agent & Skill Tooling
+.agents/
+.impeccable/
+skills-lock.json
