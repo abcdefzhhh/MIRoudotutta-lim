@@ -14,12 +14,11 @@ export default function BeritaDetail() {
   const fallbackArticles = {
     'memenangkan-porseni': {
       id_berita: 6,
-      judul: 'Siswa MI Roudotutta\'lim Sukses Memenangkan Ajang PORSENI Madrasah',
+      judul: 'MEMENANGKAN PORSENI',
       slug: 'memenangkan-porseni',
       isi_konten: `Alhamdulillah, Siswa MI Roudotutta'lim sukses menorehkan prestasi gemilang dengan memenangkan berbagai cabang perlombaan pada ajang Pekan Olahraga dan Seni (PORSENI) tingkat madrasah.\n\nDalam ajang bergengsi yang mempertemukan berbagai perwakilan sekolah dan madrasah ini, Siswa-Siswa MI Roudotutta'lim menunjukkan performa luar biasa, sportivitas tinggi, serta kekompakan tim yang solid.\n\nKepala Madrasah dan seluruh dewan guru menyampaikan apresiasi setinggi-tingginya kepada para Siswa juara dan pembimbing yang telah berjuang mengharumkan nama madrasah tercinta. Semoga prestasi ini terus memotivasi ananda untuk berprestasi di tingkat yang lebih tinggi.`,
       tgl_publish: '2026-09-23T00:00:00.000000Z',
-      gambar_thumbnail_url:
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuBePtJMaCotwUdo_WVJlOrgnrXRzFsC9mCFuCnJrbbzK08aZUjZ_F5K_BmIDAZKIFMKDQhJmVn3C8SiPobA44tHCsNDPD52AKiuutsgnrgBHo5gVVnFsZlFOVd11qSda7EjMzirIGi92dBE9dPD24vhJQ30BbUBeh91fZpeWcRJ_8Kqymu0Awmfth_MEAkC_xsX6vOBjSfYy1LUSYwIfY4FDLtuISJggPnPsMGAxDTLLiIJV1Fe9PslNA',
+      gambar_thumbnail_url: 'http://127.0.0.1:8000/uploads/berita/berita_1790127477_isKB2C.png',
     },
     'siswa-mi-roudotuttalim-sabet-medali-emas-lomba-tahfidz-kaligrafi': {
       id_berita: 3,
@@ -142,7 +141,7 @@ export default function BeritaDetail() {
         )}
 
         {!loading && article && (
-          <article className="bg-white rounded-2xl border border-border p-8 lg:p-12 shadow-sm">
+          <article className="bg-white rounded-2xl border border-border p-8 lg:p-12 shadow-sm animate-fade-in">
             {/* Meta */}
             <div className="flex flex-wrap items-center gap-3 text-xs text-ink-soft mb-4">
               <span className="font-semibold text-emerald-deep uppercase tracking-wider text-xs">

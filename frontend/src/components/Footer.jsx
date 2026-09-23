@@ -37,7 +37,7 @@ export default function Footer() {
             </a>
             <a
               className="w-9 h-9 rounded-full bg-ink/60 border border-emerald-leaf/30 flex items-center justify-center text-white hover:bg-emerald-leaf transition-colors"
-              href="https://wa.me/628123456789"
+              href="https://wa.me/6289636058110"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="WhatsApp"
@@ -63,7 +63,7 @@ export default function Footer() {
               <Link to="/program">Tahfidz &amp; Program Unggulan</Link>
             </li>
             <li className="font-body-sm text-body-sm text-emerald-100/80 hover:text-white transition-colors">
-              <Link to="/nilai-kami">Nilai &amp; Budaya Sekolah</Link>
+              <Link to="/program#nilai-kami">Nilai &amp; Budaya Sekolah</Link>
             </li>
             <li className="font-body-sm text-body-sm text-emerald-100/80 hover:text-white transition-colors">
               <Link to="/ekstrakurikuler">Ekstrakurikuler &amp; Bakat</Link>

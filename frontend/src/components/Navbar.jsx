@@ -41,7 +41,6 @@ export default function Navbar() {
     { name: 'Beranda', href: '/', id: 'beranda' },
     // Profil is handled as dropdown
     { name: 'Program Unggulan', href: '/program', id: 'program' },
-    { name: 'Nilai Kami', href: '/nilai-kami', id: 'nilai-kami' },
     { name: 'Berita', href: '/berita', id: 'berita' },
     { name: 'Kontak', href: '/kontak', id: 'kontak' },
   ]
@@ -248,7 +247,7 @@ export default function Navbar() {
               className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-emerald-deep text-white text-sm font-semibold shadow-sm hover:bg-emerald-leaf active:scale-[0.98] transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-leaf focus-visible:ring-offset-2"
             >
               <span className="w-2 h-2 rounded-full bg-gold animate-pulse"></span>
-              <span>Daftar PPDB</span>
+              <span>Info PPDB</span>
               <span className="material-symbols-outlined text-[16px] hidden sm:inline-block transition-transform group-hover:translate-x-0.5">
                 arrow_forward
               </span>
@@ -389,11 +388,11 @@ export default function Navbar() {
               className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-emerald-deep text-white font-semibold shadow-sm hover:bg-emerald-leaf transition-colors active:scale-[0.98]"
             >
               <span className="w-2 h-2 rounded-full bg-gold"></span>
-              <span>Penerimaan Santri Baru (PPDB)</span>
+              <span>Info &amp; Persyaratan PPDB</span>
             </Link>
 
             <a
-              href="https://wa.me/628123456789"
+              href="https://wa.me/6289636058110"
               target="_blank"
               rel="noopener noreferrer"
               className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-emerald-deep/20 text-emerald-deep hover:bg-emerald-leaf/10 font-medium text-sm transition-colors"

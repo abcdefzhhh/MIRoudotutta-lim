@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import guruBg from '../assets/gurustaf.jpg'
 import useScrollReveal, { useStaggerReveal } from '../hooks/useScrollReveal'
 
 export default function GuruStaf() {
@@ -84,25 +85,28 @@ export default function GuruStaf() {
 
   return (
     <div className="w-full bg-ivory pt-24 pb-20">
-      {/* Header Banner */}
-      <section className="bg-emerald-deep text-white py-14 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#D9A62B_1px,transparent_1px)] [background-size:24px_24px]"></div>
-        
-        <div className="max-w-[1240px] mx-auto px-margin-mobile lg:px-margin relative z-10">
-          <nav className="flex items-center gap-2 text-xs font-medium text-emerald-100/80 mb-4">
-            <Link to="/" className="hover:text-gold transition-colors">Beranda</Link>
-            <span>/</span>
-            <span className="text-emerald-200">Profil</span>
-            <span>/</span>
-            <span className="text-gold font-semibold">Guru &amp; Tenaga Kependidikan</span>
-          </nav>
+      {/* Header Banner with Custom Photo Background (Hanya di Judul) */}
+      <section className="relative text-white py-18 sm:py-24 lg:py-28 overflow-hidden bg-emerald-deep shadow-md">
+        {/* Full-bleed Photo Background Container */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src={guruBg}
+            alt="Dewan Guru & Tenaga Kependidikan MI Roudotutta'lim"
+            className="w-full h-full object-cover object-center filter brightness-90 transform scale-105 transition-transform duration-1000"
+          />
+          {/* Multi-layered dark gradient overlay for optimal readability & Islamic emerald aesthetic */}
+          <div className="absolute inset-0 bg-gradient-to-r from-ink/95 via-emerald-deep/90 to-emerald-deep/80"></div>
+          <div className="absolute inset-0 bg-black/25"></div>
+          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#D9A62B_1px,transparent_1px)] [background-size:24px_24px]"></div>
+        </div>
 
-          <div className="max-w-3xl">
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-bold text-white tracking-tight leading-tight">
+        <div className="max-w-[1240px] mx-auto px-margin-mobile lg:px-margin relative z-10">
+          <div className="max-w-3xl animate-slide-up">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-bold text-white tracking-tight leading-tight drop-shadow-sm">
               Guru &amp; Tenaga Kependidikan
             </h1>
             <p className="mt-4 text-base sm:text-lg text-emerald-50/90 font-body leading-relaxed max-w-2xl">
-              Mengenal para ustaz, ustazah, dan tenaga kependidikan MI Roudotutta'lim yang membimbing Siswa dengan ketulusan hati, ilmu yang mumpuni, dan keteladanan budi pekerti.
+              Mengenal para ustaz, ustazah, dan tenaga kependidikan MI Roudotutta'lim yang membimbing siswa dengan ketulusan hati, ilmu yang mumpuni, dan keteladanan budi pekerti.
             </p>
           </div>
         </div>
@@ -113,7 +117,7 @@ export default function GuruStaf() {
         {/* Core Values of Educators */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-6" ref={valuesGridRef}>
           {values.map((v, i) => (
-            <div key={i} className="reveal-child bg-white rounded-xl border border-border p-6 shadow-xs flex items-start gap-4">
+            <div key={i} className="reveal-child bg-white rounded-xl border border-border p-6 shadow-xs flex items-start gap-4 hover:border-emerald-leaf/40 hover:-translate-y-1 hover:shadow-md transition-all duration-300">
               <div className="w-12 h-12 rounded-xl bg-emerald-deep/10 text-emerald-deep flex items-center justify-center shrink-0">
                 <span className="material-symbols-outlined text-[26px]">{v.icon}</span>
               </div>
@@ -141,7 +145,7 @@ export default function GuruStaf() {
             {leadership.map((item, idx) => (
               <div
                 key={idx}
-                className="reveal-child bg-white rounded-2xl border border-border p-6 shadow-sm flex flex-col justify-between hover:border-emerald-leaf/40 transition-colors"
+                className="reveal-child bg-white rounded-2xl border border-border p-6 shadow-sm flex flex-col justify-between hover:border-emerald-leaf/40 hover:-translate-y-1.5 hover:shadow-md transition-all duration-300"
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
@@ -222,7 +226,7 @@ export default function GuruStaf() {
           </div>
           <div className="flex flex-wrap items-center gap-3 shrink-0">
             <Link
-              to="/#kontak"
+              to="/kontak"
               className="px-6 py-3 rounded-full bg-gold text-ink font-semibold text-sm hover:bg-gold-soft transition-colors shadow-sm active:scale-[0.98]"
             >
               Hubungi Kami

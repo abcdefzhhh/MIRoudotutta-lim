@@ -8,10 +8,10 @@ const fallbackNews = [
     id_berita: 6,
     slug: 'memenangkan-porseni',
     tgl_publish: '2026-09-23',
-    judul: 'Santri MI Roudotutta\'lim Sukses Memenangkan Ajang PORSENI Madrasah',
-    isi_konten: 'Alhamdulillah, santri MI Roudotutta\'lim sukses menorehkan prestasi gemilang dengan memenangkan berbagai cabang perlombaan pada ajang PORSENI.',
-    gambar_thumbnail:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuBePtJMaCotwUdo_WVJlOrgnrXRzFsC9mCFuCnJrbbzK08aZUjZ_F5K_BmIDAZKIFMKDQhJmVn3C8SiPobA44tHCsNDPD52AKiuutsgnrgBHo5gVVnFsZlFOVd11qSda7EjMzirIGi92dBE9dPD24vhJQ30BbUBeh91fZpeWcRJ_8Kqymu0Awmfth_MEAkC_xsX6vOBjSfYy1LUSYwIfY4FDLtuISJggPnPsMGAxDTLLiIJV1Fe9PslNA',
+    judul: 'MEMENANGKAN PORSENI',
+    isi_konten: 'siswa mi memenangkan porseni',
+    gambar_thumbnail_url: 'http://127.0.0.1:8000/uploads/berita/berita_1790127477_isKB2C.png',
+    gambar_thumbnail: 'uploads/berita/berita_1790127477_isKB2C.png',
   },
   {
     id_berita: 3,
@@ -19,8 +19,9 @@ const fallbackNews = [
     tgl_publish: '2026-09-08',
     judul: 'Siswa MI Roudotutta\'lim Sabet Medali Emas Lomba Tahfidz dan Kaligrafi Tingkat Kecamatan',
     isi_konten: 'Prestasi membanggakan kembali ditorehkan oleh santri MI Roudotutta\'lim dalam ajang Festival Seni & Olahraga Madrasah (AKSIOMA). Muhammad Al-Fatih dan Aisyah Humaira sukses meraih Juara 1.',
+    gambar_thumbnail_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBePtJMaCotwUdo_WVJlOrgnrXRzFsC9mCFuCnJrbbzK08aZUjZ_F5K_BmIDAZKIFMKDQhJmVn3C8SiPobA44tHCsNDPD52AKiuutsgnrgBHo5gVVnFsZlFOVd11qSda7EjMzirIGi92dBE9dPD24vhJQ30BbUBeh91fZpeWcRJ_8Kqymu0Awmfth_MEAkC_xsX6vOBjSfYy1LUSYwIfY4FDLtuISJggPnPsMGAxDTLLiIJV1Fe9PslNA',
     gambar_thumbnail:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuC9EaAXAgEgRHM7I0pOWNBY6650nNwDDvTv62FssczfGeNyObgQNSArCMN-AUhHSdWFxCnizXwyTGX5lRiYt02GPMnib8u1F_FqoNu-nmblRVuWaPa9URy6ZlAb9xZlu8dQbBfnB96tKFk9AyQJ8q7r17dFv3UQYhXVsonbDkmpNsbw3kE-P6ttsMsY29kKxO9UQcL2nWCrO-Q9awGwckooa8JaXMFvXWItaXp11WvVF2XyI1gKHwRUIw',
+      'https://lh3.googleusercontent.com/aida-public/AB6AXuBePtJMaCotwUdo_WVJlOrgnrXRzFsC9mCFuCnJrbbzK08aZUjZ_F5K_BmIDAZKIFMKDQhJmVn3C8SiPobA44tHCsNDPD52AKiuutsgnrgBHo5gVVnFsZlFOVd11qSda7EjMzirIGi92dBE9dPD24vhJQ30BbUBeh91fZpeWcRJ_8Kqymu0Awmfth_MEAkC_xsX6vOBjSfYy1LUSYwIfY4FDLtuISJggPnPsMGAxDTLLiIJV1Fe9PslNA',
   },
   {
     id_berita: 2,
@@ -28,8 +29,9 @@ const fallbackNews = [
     tgl_publish: '2026-09-05',
     judul: 'Semarak Gerakan Gemar Membaca dan Pojok Baca Digital di Perpustakaan Madrasah',
     isi_konten: 'Perpustakaan SIPERPUS MI Roudotutta\'lim meresmikan sarana pojok baca interaktif yang dilengkapi tablet literasi digital dan ribuan buku ensiklopedia anak islami.',
+    gambar_thumbnail_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC9EaAXAgEgRHM7I0pOWNBY6650nNwDDvTv62FssczfGeNyObgQNSArCMN-AUhHSdWFxCnizXwyTGX5lRiYt02GPMnib8u1F_FqoNu-nmblRVuWaPa9URy6ZlAb9xZlu8dQbBfnB96tKFk9AyQJ8q7r17dFv3UQYhXVsonbDkmpNsbw3kE-P6ttsMsY29kKxO9UQcL2nWCrO-Q9awGwckooa8JaXMFvXWItaXp11WvVF2XyI1gKHwRUIw',
     gambar_thumbnail:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuA4VzSQGE_4bhbB4HxhFFqinNv4XO2ztu1Eru2hmwmuM2FRomloF6SuwQRiDwVtK50-tSyiBBviEBTRC0OKVvUyXwubH0o7W6up_-wipTHRa9Qun9XRXKajwdycYDsM7g_8zynYW-1FniiTTjxJ1PVtGi-uJ9bCeuIYiwhaGnRzDao2mzUFay1whz_bj3rq-S_NJ1SUKBvl_db8gOe3gE9eLP96ywP5CmphcPKiVekXvgUCgZzYyvTFMg',
+      'https://lh3.googleusercontent.com/aida-public/AB6AXuC9EaAXAgEgRHM7I0pOWNBY6650nNwDDvTv62FssczfGeNyObgQNSArCMN-AUhHSdWFxCnizXwyTGX5lRiYt02GPMnib8u1F_FqoNu-nmblRVuWaPa9URy6ZlAb9xZlu8dQbBfnB96tKFk9AyQJ8q7r17dFv3UQYhXVsonbDkmpNsbw3kE-P6ttsMsY29kKxO9UQcL2nWCrO-Q9awGwckooa8JaXMFvXWItaXp11WvVF2XyI1gKHwRUIw',
   },
 ]
 
@@ -65,8 +67,14 @@ export default function NewsGrid() {
   }
 
   const getThumbnail = (item, idx) => {
-    if (item.gambar_thumbnail && item.gambar_thumbnail.startsWith('http')) {
-      return item.gambar_thumbnail
+    if (item.gambar_thumbnail_url) {
+      return item.gambar_thumbnail_url
+    }
+    if (item.gambar_thumbnail) {
+      if (item.gambar_thumbnail.startsWith('http')) {
+        return item.gambar_thumbnail
+      }
+      return `http://127.0.0.1:8000/${item.gambar_thumbnail.replace(/^\//, '')}`
     }
     const fallbacks = [
       'https://lh3.googleusercontent.com/aida-public/AB6AXuBePtJMaCotwUdo_WVJlOrgnrXRzFsC9mCFuCnJrbbzK08aZUjZ_F5K_BmIDAZKIFMKDQhJmVn3C8SiPobA44tHCsNDPD52AKiuutsgnrgBHo5gVVnFsZlFOVd11qSda7EjMzirIGi92dBE9dPD24vhJQ30BbUBeh91fZpeWcRJ_8Kqymu0Awmfth_MEAkC_xsX6vOBjSfYy1LUSYwIfY4FDLtuISJggPnPsMGAxDTLLiIJV1Fe9PslNA',
@@ -116,6 +124,10 @@ export default function NewsGrid() {
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   alt={item.judul}
                   src={getThumbnail(item, idx)}
+                  onError={(e) => {
+                    e.target.onerror = null
+                    e.target.src = 'https://lh3.googleusercontent.com/aida-public/AB6AXuBePtJMaCotwUdo_WVJlOrgnrXRzFsC9mCFuCnJrbbzK08aZUjZ_F5K_BmIDAZKIFMKDQhJmVn3C8SiPobA44tHCsNDPD52AKiuutsgnrgBHo5gVVnFsZlFOVd11qSda7EjMzirIGi92dBE9dPD24vhJQ30BbUBeh91fZpeWcRJ_8Kqymu0Awmfth_MEAkC_xsX6vOBjSfYy1LUSYwIfY4FDLtuISJggPnPsMGAxDTLLiIJV1Fe9PslNA'
+                  }}
                   loading="lazy"
                 />
               </div>

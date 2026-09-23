@@ -3,9 +3,88 @@ import programUnggulanBg from '../assets/programunggulan.jpg'
 import useScrollReveal, { useStaggerReveal } from '../hooks/useScrollReveal'
 
 export default function ProgramUnggulan() {
-  const introRef = useScrollReveal()
   const gridRef = useStaggerReveal({ staggerMs: 120 })
+  const valuesRef = useScrollReveal()
+  const valuesGridRef = useStaggerReveal({ staggerMs: 120 })
   const ctaRef = useScrollReveal()
+
+  const values = [
+    {
+      num: '01',
+      title: 'Ikhlas',
+      latin: 'Al-Ikhlas',
+      tagline: 'Ketulusan Niat dalam Beribadah dan Menuntut Ilmu',
+      arabic: 'وَمَا أُمِرُوا إِلَّا لِيَعْبُدُوا اللَّهَ مُخْلِصِينَ لَهُ الدِّينَ',
+      meaning: '“Padahal mereka hanya diperintahkan menyembah Allah dengan ikhlas menaati-Nya semata-mata karena (menjalankan) agama...” (QS. Al-Bayyinah: 5)',
+      desc: 'Mendidik Siswa untuk beramal, belajar, dan berbuat kebaikan semata-mata mengharap ridha Allah SWT, bukan demi pujian atau popularitas semu.',
+      practices: [
+        'Membiasakan niat belajar sebelum membuka buku',
+        'Menolong teman tanpa pamrih atau imbalan',
+        'Berbuat jujur dalam ujian meski tanpa pengawasan',
+      ],
+      icon: 'volunteer_activism',
+    },
+    {
+      num: '02',
+      title: 'Amanah',
+      latin: 'Al-Amanah',
+      tagline: 'Integritas, Kejujuran Moral, dan Tanggung Jawab Pribadi',
+      arabic: 'إِنَّ اللَّهَ يَأْمُرُكُمْ أَن تُؤَدُّوا الْأَمَانَاتِ إِلَىٰ أَهْلِهَا',
+      meaning: '“Sungguh, Allah menyuruhmu menyampaikan amanat kepada yang berhak menerimanya...” (QS. An-Nisa: 58)',
+      desc: 'Menanamkan rasa tanggung jawab atas setiap tugas, perkataan, dan barang titipan. Siswa dibimbing menjadi pribadi yang dapat dipercaya oleh keluarga dan masyarakat.',
+      practices: [
+        'Menjaga dan mengembalikan buku perpustakaan tepat waktu',
+        'Menyelesaikan tugas sekolah dengan penuh tanggung jawab',
+        'Menjaga rahasia dan amanah dari guru serta orang tua',
+      ],
+      icon: 'verified_user',
+    },
+    {
+      num: '03',
+      title: 'Berakhlak',
+      latin: 'Al-Akhlaqul Karimah',
+      tagline: 'Keluhuran Budi Pekerti, Sopan Santun, dan Adab Islami',
+      arabic: 'إِنَّمَا بُعِثْتُ لِأُتَمِّمَ مَكَارِمَ الْأَخْلَاقِ',
+      meaning: '“Sesungguhnya aku diutus hanyalah untuk menyempurnakan kemuliaan akhlak.” (HR. Ahmad)',
+      desc: 'Adab diletakkan mendahului ilmu. Siswa diajarkan memuliakan orang tua, menghormati guru, mengasihi yang lebih muda, dan menghargai teman sebaya.',
+      practices: [
+        'Mencium tangan guru dan orang tua dengan santun',
+        'Menjaga lisan dari perkataan kotor dan ejekan',
+        'Mendahulukan adab saat berbicara, makan, dan berjalan',
+      ],
+      icon: 'diversity_3',
+    },
+    {
+      num: '04',
+      title: 'Berilmu',
+      latin: 'Al-\'Ilm',
+      tagline: 'Kecakapan Nalar Kritis, Semangat Literasi, dan Sains',
+      arabic: 'يَرْفَعِ اللَّهُ الَّذِينَ آمَنُوا مِنكُمْ وَالَّذِينَ أُوتُوا الْعِلْمَ دَرَجَاتٍ',
+      meaning: '“...Allah akan mengangkat (derajat) orang-orang yang beriman di antaramu dan orang-orang yang diberi ilmu beberapa derajat.” (QS. Al-Mujadilah: 11)',
+      desc: 'Mendorong rasa ingin tahu ilmiah Siswa melalui pembelajaran aktif, nalar kritis, kecintaan membaca, dan pemahaman sains yang komprehensif.',
+      practices: [
+        'Rutin membaca 15 menit setiap pagi di pojok baca',
+        'Aktif bertanya dan mengeksplorasi fenomena alam',
+        'Menghubungkan sains dengan kebesaran ciptaan Allah',
+      ],
+      icon: 'auto_stories',
+    },
+    {
+      num: '05',
+      title: 'Kebersamaan',
+      latin: 'Al-Ukhuwwah',
+      tagline: 'Persaudaraan, Gotong Royong, dan Empati Sosial',
+      arabic: 'إِنَّمَا الْمُؤْمِنُونَ إِخْوَةٌ فَأَصْلِحُوا بَيْنَ أَخَوَيْكُمْ',
+      meaning: '“Sesungguhnya orang-orang mukmin itu bersaudara...” (QS. Al-Hujurat: 10)',
+      desc: 'Membangun suasana madrasah yang hangat, inklusif, dan saling menguatkan. Menolak segala bentuk diskriminasi dan perundungan (bullying).',
+      practices: [
+        'Berbagi bekal dan peduli kepada kawan yang membutuhkan',
+        'Bekerjasama dalam piket kelas dan kegiatan pramuka',
+        'Saling memaafkan jika terjadi perselisihan',
+      ],
+      icon: 'handshake',
+    },
+  ]
 
   const programs = [
     {
@@ -124,17 +203,7 @@ export default function ProgramUnggulan() {
         </div>
 
         <div className="max-w-[1240px] mx-auto px-margin-mobile lg:px-margin relative z-10">
-          <nav className="flex items-center gap-2 text-xs font-medium text-emerald-100/80 mb-4">
-            <Link to="/" className="hover:text-gold transition-colors">Beranda</Link>
-            <span>/</span>
-            <span className="text-gold font-semibold">Program Unggulan</span>
-          </nav>
-
           <div className="max-w-3xl animate-slide-up">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gold/20 border border-gold/40 text-gold-soft text-xs font-bold uppercase tracking-wider mb-4 backdrop-blur-xs">
-              <span className="material-symbols-outlined text-[16px]">verified</span>
-              <span>Kurikulum &amp; Pembiasaan Islami Terpadu</span>
-            </div>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-bold text-white tracking-tight leading-tight drop-shadow-sm">
               Program Unggulan Madrasah
             </h1>
@@ -147,31 +216,6 @@ export default function ProgramUnggulan() {
 
       {/* Main Container */}
       <div className="max-w-[1240px] mx-auto px-margin-mobile lg:px-margin mt-12 space-y-16">
-        {/* Method & Approach Card */}
-        <section className="bg-white rounded-2xl border border-border p-6 lg:p-8 shadow-xs flex flex-col md:flex-row items-center justify-between gap-6" ref={introRef}>
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-xl bg-emerald-deep/10 text-emerald-deep flex items-center justify-center shrink-0">
-              <span className="material-symbols-outlined text-[28px]">balance</span>
-            </div>
-            <div>
-              <h3 className="font-heading font-bold text-lg text-emerald-deep">
-                Filosofi Integrasi: Iman, Ilmu, dan Amal
-              </h3>
-              <p className="text-xs sm:text-sm text-ink-soft mt-1 leading-relaxed max-w-3xl">
-                Setiap materi kurikulum nasional disinari dengan nilai tauhid, sehingga Siswa memahami bahwa belajar sains, bahasa, dan matematika adalah bagian dari ibadah dan ketaatan kepada Allah SWT.
-              </p>
-            </div>
-          </div>
-          <div className="shrink-0 flex items-center gap-3">
-            <Link
-              to="/#ppdb"
-              className="px-5 py-2.5 rounded-full bg-emerald-deep text-white text-xs sm:text-sm font-semibold hover:bg-emerald-leaf transition-colors active:scale-[0.98] shadow-sm"
-            >
-              Daftar PPDB Sekarang
-            </Link>
-          </div>
-        </section>
-
         {/* Detailed Program Cards Grid */}
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-8" ref={gridRef}>
           {programs.map((item, idx) => (
@@ -217,6 +261,86 @@ export default function ProgramUnggulan() {
           ))}
         </section>
 
+        {/* SECTION: 5 NILAI LUHUR BUDAYA MADRASAH */}
+        <section id="nilai-kami" className="scroll-mt-24 space-y-8" ref={valuesRef}>
+          {/* Header Section */}
+          <div className="max-w-3xl">
+            <span className="text-xs font-bold uppercase tracking-wider text-emerald-leaf">
+              Fondasi Karakter &amp; Adab
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-heading font-bold text-emerald-deep mt-1">
+              5 Nilai Luhur Budaya Madrasah
+            </h2>
+            <p className="text-xs sm:text-sm text-ink-soft mt-1 leading-relaxed">
+              Program unggulan akademik madrasah bersandar kokoh pada lima pilar nilai budaya islami yang dibiasakan dalam keseharian setiap Siswa.
+            </p>
+          </div>
+
+          {/* 5 Values Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" ref={valuesGridRef}>
+            {values.map((v, vIdx) => (
+              <div
+                key={v.num}
+                className={`reveal-child bg-white rounded-2xl border border-border p-6 shadow-xs flex flex-col justify-between hover:shadow-lg hover:border-emerald-leaf/40 hover:-translate-y-1.5 transition-all duration-300 ${vIdx === 4 ? 'md:col-span-2 lg:col-span-1' : ''
+                  }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-11 h-11 rounded-xl bg-emerald-deep/10 text-emerald-deep flex items-center justify-center">
+                      <span className="material-symbols-outlined text-[24px]">{v.icon}</span>
+                    </div>
+                    <span className="font-heading text-2xl font-bold text-border">
+                      {v.num}
+                    </span>
+                  </div>
+
+                  <div className="mb-3">
+                    <div className="flex items-baseline gap-2">
+                      <h3 className="font-heading font-bold text-xl text-ink">
+                        {v.title}
+                      </h3>
+                      <span className="text-xs font-semibold text-emerald-leaf">
+                        ({v.latin})
+                      </span>
+                    </div>
+                    <p className="text-xs text-ink-soft font-medium mt-0.5">
+                      {v.tagline}
+                    </p>
+                  </div>
+
+                  {/* Ayat / Hadits Box */}
+                  <div className="bg-ivory-2 rounded-xl p-3.5 border border-border/70 mb-4">
+                    <p className="text-right font-serif text-sm font-semibold text-emerald-deep leading-relaxed mb-1.5">
+                      {v.arabic}
+                    </p>
+                    <p className="text-[11px] text-ink-soft italic leading-relaxed">
+                      {v.meaning}
+                    </p>
+                  </div>
+
+                  <p className="text-xs sm:text-sm text-ink-soft leading-relaxed mb-4">
+                    {v.desc}
+                  </p>
+
+                  <div className="space-y-1.5 border-t border-border/50 pt-3">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-deep block">
+                      Wujud Pembiasaan di Madrasah:
+                    </span>
+                    {v.practices.map((pr, pIdx) => (
+                      <div key={pIdx} className="flex items-start gap-2 text-xs text-ink-soft">
+                        <span className="material-symbols-outlined text-emerald-leaf text-[15px] shrink-0 mt-0.5">
+                          check
+                        </span>
+                        <span>{pr}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
         {/* CTA Banner */}
         <section className="bg-emerald-deep rounded-2xl text-white p-8 sm:p-10 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-sm" ref={ctaRef}>
           <div>
@@ -224,15 +348,15 @@ export default function ProgramUnggulan() {
               Siap Mendaftarkan Putra-Putri Anda?
             </h3>
             <p className="text-sm text-emerald-100/90 mt-1 max-w-xl">
-              Kunjungi madrasah kami atau daftar secara online untuk mendapatkan kuota penerimaan Siswa baru tahun ajaran 2026/2027.
+              Kunjungi sekretariat madrasah kami untuk informasi dan penyerahan berkas penerimaan Siswa baru.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3 shrink-0">
             <Link
-              to="/#ppdb"
+              to="/ppdb"
               className="px-6 py-3 rounded-full bg-gold text-ink font-semibold text-sm hover:bg-gold-soft transition-colors shadow-sm active:scale-[0.98]"
             >
-              Daftar PPDB Online
+              Informasi &amp; Persyaratan PPDB
             </Link>
             <Link
               to="/visi-misi"

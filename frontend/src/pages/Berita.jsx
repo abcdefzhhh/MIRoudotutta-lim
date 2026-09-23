@@ -17,6 +17,16 @@ export default function Berita() {
 
   const fallbackNews = [
     {
+      id_berita: 6,
+      judul: 'MEMENANGKAN PORSENI',
+      slug: 'memenangkan-porseni',
+      isi_konten: 'siswa mi memenangkan porseni',
+      tgl_publish: '2026-09-23T00:00:00.000000Z',
+      kategori: 'Prestasi',
+      gambar_thumbnail_url: 'http://127.0.0.1:8000/uploads/berita/berita_1790127477_isKB2C.png',
+      gambar_thumbnail: 'uploads/berita/berita_1790127477_isKB2C.png',
+    },
+    {
       id_berita: 3,
       judul: 'Siswa MI Roudotutta\'lim Sabet Medali Emas Lomba Tahfidz dan Kaligrafi Tingkat Kecamatan',
       slug: 'siswa-mi-roudotuttalim-sabet-medali-emas-lomba-tahfidz-kaligrafi',
@@ -103,12 +113,6 @@ export default function Berita() {
         <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#D9A62B_1px,transparent_1px)] [background-size:24px_24px]"></div>
         
         <div className="max-w-[1240px] mx-auto px-margin-mobile lg:px-margin relative z-10">
-          <nav className="flex items-center gap-2 text-xs font-medium text-emerald-100/80 mb-4">
-            <Link to="/" className="hover:text-gold transition-colors">Beranda</Link>
-            <span>/</span>
-            <span className="text-gold font-semibold">Warta &amp; Berita</span>
-          </nav>
-
           <div className="max-w-3xl">
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-bold text-white tracking-tight leading-tight">
               Warta &amp; Berita Madrasah

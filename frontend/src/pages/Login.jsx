@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { Link, useNavigate, useLocation, Navigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import schoolLogo from '../assets/logo.png'
 
@@ -16,7 +16,7 @@ export default function Login() {
 
   // If already logged in, go straight to admin
   if (isAuthenticated) {
-    navigate('/admin', { replace: true })
+    return <Navigate to="/admin" replace />
   }
 
   const handleSubmit = async (e) => {

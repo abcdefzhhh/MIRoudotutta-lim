@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import Navbar from './components/Navbar'
@@ -7,7 +7,6 @@ import VisiMisi from './pages/VisiMisi'
 import GuruStaf from './pages/GuruStaf'
 import Ekstrakurikuler from './pages/Ekstrakurikuler'
 import ProgramUnggulan from './pages/ProgramUnggulan'
-import NilaiKami from './pages/NilaiKami'
 import Berita from './pages/Berita'
 import BeritaDetail from './pages/BeritaDetail'
 import Kontak from './pages/Kontak'
@@ -34,7 +33,10 @@ function AppContent() {
   return (
     <div className="min-h-screen flex flex-col bg-ivory text-ink font-body">
       {!hideHeaderFooter && <Navbar />}
-      <div className="flex-grow">
+      <div
+        key={location.pathname.startsWith('/admin') ? 'admin-root' : location.pathname}
+        className="flex-grow"
+      >
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/visi-misi" element={<VisiMisi />} />
@@ -42,7 +44,7 @@ function AppContent() {
           <Route path="/ekstrakurikuler" element={<Ekstrakurikuler />} />
           <Route path="/program" element={<ProgramUnggulan />} />
           <Route path="/program-unggulan" element={<ProgramUnggulan />} />
-          <Route path="/nilai-kami" element={<NilaiKami />} />
+          <Route path="/nilai-kami" element={<Navigate to="/program" replace />} />
           <Route path="/berita" element={<Berita />} />
           <Route path="/berita/:slug" element={<BeritaDetail />} />
           <Route path="/kontak" element={<Kontak />} />

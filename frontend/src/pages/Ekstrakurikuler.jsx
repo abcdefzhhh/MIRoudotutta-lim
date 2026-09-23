@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import eskulBg from '../assets/eskul.jpeg'
+import eskulBg from '../assets/eskul.jpg'
 import useScrollReveal, { useStaggerReveal } from '../hooks/useScrollReveal'
 
 export default function Ekstrakurikuler() {
@@ -84,19 +84,7 @@ export default function Ekstrakurikuler() {
         </div>
 
         <div className="max-w-[1240px] mx-auto px-margin-mobile lg:px-margin relative z-10">
-          <nav className="flex items-center gap-2 text-xs font-medium text-emerald-100/80 mb-4">
-            <Link to="/" className="hover:text-gold transition-colors">Beranda</Link>
-            <span>/</span>
-            <span className="text-emerald-200">Profil</span>
-            <span>/</span>
-            <span className="text-gold font-semibold">Ekstrakurikuler</span>
-          </nav>
-
           <div className="max-w-3xl animate-slide-up">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gold/20 border border-gold/40 text-gold-soft text-xs font-bold uppercase tracking-wider mb-4 backdrop-blur-xs">
-              <span className="material-symbols-outlined text-[16px]">sports_kabaddi</span>
-              <span>Aktivitas &amp; Pengembangan Bakat Siswa</span>
-            </div>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-bold text-white tracking-tight leading-tight drop-shadow-sm">
               Ekstrakurikuler &amp; Bakat Siswa
             </h1>
@@ -201,10 +189,10 @@ export default function Ekstrakurikuler() {
           </div>
           <div className="flex flex-wrap items-center gap-3 shrink-0">
             <Link
-              to="/#ppdb"
+              to="/ppdb"
               className="px-6 py-3 rounded-full bg-gold text-ink font-semibold text-sm hover:bg-gold-soft transition-colors shadow-sm active:scale-[0.98]"
             >
-              Daftar PPDB Online
+              Informasi &amp; Persyaratan PPDB
             </Link>
             <Link
               to="/"

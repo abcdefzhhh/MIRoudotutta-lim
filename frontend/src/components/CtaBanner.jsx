@@ -30,11 +30,11 @@ export default function CtaBanner() {
         <div className="mt-space-xl flex flex-wrap items-center justify-center gap-space-md w-full">
           {/* Main Gold CTA Button */}
           <Link
-            className="inline-flex items-center justify-center gap-space-sm font-label-lg text-label-lg px-9 py-4 rounded-full bg-gold text-ink font-bold shadow-lg hover:bg-gold-soft active:scale-[0.98] transition-all transform hover:-translate-y-0.5"
+            className="inline-flex items-center justify-center gap-space-sm font-label-lg text-label-lg px-8 py-4 rounded-full bg-gold text-ink font-bold shadow-lg hover:bg-gold-soft active:scale-[0.98] transition-all transform hover:-translate-y-0.5"
             to="/ppdb"
           >
-            <span className="material-symbols-outlined text-[20px] text-ink">edit_document</span>
-            <span>Daftar PPDB Sekarang</span>
+            <span className="material-symbols-outlined text-[20px] text-ink">assignment</span>
+            <span>Informasi &amp; Persyaratan PPDB</span>
           </Link>
 
           {/* Secondary WhatsApp Button */}

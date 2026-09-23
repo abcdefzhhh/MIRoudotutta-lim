@@ -13,7 +13,10 @@ export default function AdminBerita() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [search, setSearch] = useState('')
+  const [selectedCategory, setSelectedCategory] = useState('Semua')
   const [toast, setToast] = useState(null)
+
+  const categories = ['Semua', 'Prestasi', 'Kegiatan', 'Pengumuman']
 
   // Modal states
   const [isCreateOpen, setIsCreateOpen] = useState(false)
@@ -109,6 +112,7 @@ export default function AdminBerita() {
       const data = new FormData()
       data.append('judul', formData.judul)
       data.append('isi_konten', formData.isi_konten)
+      data.append('kategori', formData.kategori || 'Kegiatan')
       data.append('tgl_publish', formData.tgl_publish)
       if (photoFile) {
         data.append('foto', photoFile)
@@ -149,7 +153,7 @@ export default function AdminBerita() {
     setFormData({
       judul: item.judul,
       isi_konten: item.isi_konten,
-      kategori: 'Kegiatan',
+      kategori: item.kategori || 'Kegiatan',
       tgl_publish: item.tgl_publish ? item.tgl_publish.split('T')[0] : '',
       gambar_thumbnail: item.gambar_thumbnail || '',
     })
@@ -165,6 +169,7 @@ export default function AdminBerita() {
       const data = new FormData()
       data.append('judul', formData.judul)
       data.append('isi_konten', formData.isi_konten)
+      data.append('kategori', formData.kategori || 'Kegiatan')
       data.append('tgl_publish', formData.tgl_publish)
       if (photoFile) {
         data.append('foto', photoFile)
@@ -223,10 +228,14 @@ export default function AdminBerita() {
     }
   }
 
-  const filteredNews = news.filter((item) =>
-    item.judul?.toLowerCase().includes(search.toLowerCase()) ||
-    item.isi_konten?.toLowerCase().includes(search.toLowerCase())
-  )
+  const filteredNews = news.filter((item) => {
+    const matchesSearch =
+      item.judul?.toLowerCase().includes(search.toLowerCase()) ||
+      item.isi_konten?.toLowerCase().includes(search.toLowerCase())
+    const matchesCategory =
+      selectedCategory === 'Semua' || (item.kategori || 'Kegiatan') === selectedCategory
+    return matchesSearch && matchesCategory
+  })
 
   const formatDate = (dateStr) => {
     if (!dateStr) return '-'
@@ -326,29 +335,58 @@ export default function AdminBerita() {
         {/* Content Card with Table */}
         <div className="rounded-xl border border-slate-200 bg-white shadow-xs overflow-hidden">
           {/* Table Header Filter & Search */}
-          <div className="p-4 sm:p-5 border-b border-slate-200 bg-white flex flex-col sm:flex-row items-center justify-between gap-3">
-            <div className="relative w-full sm:w-80">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">
-                search
-              </span>
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Cari berdasarkan judul warta..."
-                className="w-full pl-9 pr-4 py-2 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all placeholder:text-slate-400"
-              />
+          <div className="p-4 sm:p-5 border-b border-slate-200 bg-white flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
+            {/* Filter Kategori Tabs */}
+            <div className="flex flex-wrap items-center gap-1.5 bg-slate-100/90 p-1 rounded-xl border border-slate-200">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => setSelectedCategory(cat)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 flex items-center gap-1.5 ${
+                    selectedCategory === cat
+                      ? 'bg-white text-emerald-800 font-semibold shadow-xs border border-slate-200/90'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+                  }`}
+                >
+                  <span>{cat}</span>
+                  <span
+                    className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono ${
+                      selectedCategory === cat
+                        ? 'bg-emerald-100 text-emerald-800'
+                        : 'bg-slate-200 text-slate-600'
+                    }`}
+                  >
+                    {cat === 'Semua'
+                      ? news.length
+                      : news.filter((n) => (n.kategori || 'Kegiatan') === cat).length}
+                  </span>
+                </button>
+              ))}
             </div>
 
-            <div className="flex items-center gap-2 self-end sm:self-auto text-xs text-slate-500">
-              <span>Menampilkan {filteredNews.length} dari {news.length} berita</span>
+            {/* Search Box & Actions */}
+            <div className="flex items-center gap-3">
+              <div className="relative w-full sm:w-64">
+                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">
+                  search
+                </span>
+                <input
+                  type="text"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Cari judul warta..."
+                  className="w-full pl-9 pr-4 py-2 text-xs sm:text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all placeholder:text-slate-400"
+                />
+              </div>
+
               <button
                 type="button"
                 onClick={fetchNews}
-                className="p-1.5 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-100 transition-colors"
+                className="p-2 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-100 transition-colors shrink-0"
                 title="Refresh Data"
               >
-                <span className="material-symbols-outlined text-[16px]">refresh</span>
+                <span className="material-symbols-outlined text-[18px]">refresh</span>
               </button>
             </div>
           </div>
@@ -361,6 +399,7 @@ export default function AdminBerita() {
                   <th className="py-3.5 px-4 w-12 text-center">ID</th>
                   <th className="py-3.5 px-4 w-20 text-center">Foto</th>
                   <th className="py-3.5 px-4">Judul &amp; Cuplikan Berita</th>
+                  <th className="py-3.5 px-4 w-32 text-center">Kategori</th>
                   <th className="py-3.5 px-4 w-44">Slug URL</th>
                   <th className="py-3.5 px-4 w-32">Tgl Publish</th>
                   <th className="py-3.5 px-4 w-36 text-center">Aksi</th>
@@ -370,7 +409,7 @@ export default function AdminBerita() {
                 {/* Loading State */}
                 {loading && (
                   <tr>
-                    <td colSpan="6" className="py-8 text-center text-slate-500">
+                    <td colSpan="7" className="py-8 text-center text-slate-500">
                       <div className="flex flex-col items-center gap-2">
                         <span className="material-symbols-outlined text-[28px] animate-spin text-emerald-600">
                           sync
@@ -384,7 +423,7 @@ export default function AdminBerita() {
                 {/* Error State */}
                 {error && !loading && (
                   <tr>
-                    <td colSpan="6" className="py-8 text-center">
+                    <td colSpan="7" className="py-8 text-center">
                       <div className="text-rose-600 text-sm font-medium mb-2">{error}</div>
                       <button
                         onClick={fetchNews}
@@ -399,13 +438,15 @@ export default function AdminBerita() {
                 {/* Empty State */}
                 {!loading && !error && filteredNews.length === 0 && (
                   <tr>
-                    <td colSpan="6" className="py-12 text-center text-slate-500">
+                    <td colSpan="7" className="py-12 text-center text-slate-500">
                       <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-2 text-slate-400">
                         <span className="material-symbols-outlined text-[24px]">newspaper</span>
                       </div>
                       <p className="text-sm font-medium text-slate-700">Belum ada berita ditemukan</p>
                       <p className="text-xs text-slate-400 mt-0.5">
-                        Klik tombol "+ Tulis Berita Baru" untuk menambahkan berita pertama.
+                        {search || selectedCategory !== 'Semua'
+                          ? 'Tidak ada berita yang cocok dengan filter atau pencarian.'
+                          : 'Klik tombol "+ Tulis Berita Baru" untuk menambahkan berita pertama.'}
                       </p>
                     </td>
                   </tr>
@@ -442,6 +483,26 @@ export default function AdminBerita() {
                         <p className="text-xs text-slate-500 line-clamp-1 mt-0.5">
                           {item.isi_konten}
                         </p>
+                      </td>
+                      <td className="py-3.5 px-4 text-center">
+                        {item.kategori === 'Prestasi' && (
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                            <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                            Prestasi
+                          </span>
+                        )}
+                        {item.kategori === 'Pengumuman' && (
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                            <span className="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                            Pengumuman
+                          </span>
+                        )}
+                        {(!item.kategori || item.kategori === 'Kegiatan') && (
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                            Kegiatan
+                          </span>
+                        )}
                       </td>
                       <td className="py-3.5 px-4 font-mono text-xs text-slate-600 truncate max-w-[180px]">
                         {item.slug}
@@ -492,156 +553,185 @@ export default function AdminBerita() {
 
       {/* MODAL: TAMBAH BERITA */}
       {isCreateOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-slate-200 flex items-center justify-between">
+        <div className="fixed inset-0 z-[100] bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-fade-in">
+          <div className="relative w-full max-w-2xl bg-white rounded-2xl border border-slate-200 shadow-2xl flex flex-col my-auto max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-4rem)] overflow-hidden animate-modal-pop">
+            <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-white shrink-0">
               <div>
-                <h3 className="font-bold text-lg text-slate-900">Tulis Berita Baru</h3>
-                <p className="text-xs text-slate-500">
+                <h3 className="font-bold text-base sm:text-lg text-slate-900">Tulis Berita Baru</h3>
+                <p className="text-xs text-slate-500 mt-0.5">
                   Data akan disimpan ke database dan langsung tampil di halaman berita publik.
                 </p>
               </div>
               <button
+                type="button"
                 onClick={() => setIsCreateOpen(false)}
-                className="text-slate-400 hover:text-slate-600 p-1 rounded-lg"
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+                title="Tutup Modal"
               >
                 <span className="material-symbols-outlined text-[20px]">close</span>
               </button>
             </div>
 
-            <form onSubmit={handleCreateSubmit} className="p-6 space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Judul Berita *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.judul}
-                  onChange={(e) => setFormData({ ...formData, judul: e.target.value })}
-                  placeholder="Contoh: Siswa MI Meraih Juara 1 Tahfidz Tingkat Kabupaten"
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Tanggal Publikasi
-                </label>
-                <input
-                  type="date"
-                  value={formData.tgl_publish}
-                  onChange={(e) => setFormData({ ...formData, tgl_publish: e.target.value })}
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
-                />
-              </div>
-
-              {/* Upload Foto / Thumbnail */}
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                  Foto Dokumentasi / Thumbnail Berita
-                </label>
-
-                {photoPreview ? (
-                  <div className="relative rounded-xl border border-slate-200 overflow-hidden bg-slate-900 group shadow-xs">
-                    <img
-                      src={photoPreview}
-                      alt="Pratinjau foto berita"
-                      className="w-full h-48 sm:h-56 object-cover opacity-90 group-hover:opacity-100 transition-opacity"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-transparent to-transparent flex items-end justify-between p-3 sm:p-4">
-                      <div className="text-white text-xs">
-                        <span className="font-semibold block truncate max-w-[200px] sm:max-w-xs">
-                          {photoFile ? photoFile.name : 'Foto Berita Terpilih'}
-                        </span>
-                        {photoFile && (
-                          <span className="text-[11px] text-slate-300">
-                            {(photoFile.size / 1024).toFixed(0)} KB • Foto dari perangkat
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <label className="cursor-pointer px-3 py-1.5 rounded-lg bg-white/95 hover:bg-white text-slate-800 text-xs font-semibold shadow-xs transition-colors flex items-center gap-1">
-                          <span className="material-symbols-outlined text-[16px]">sync</span>
-                          <span>Ganti Foto</span>
-                          <input
-                            type="file"
-                            accept="image/jpeg,image/png,image/webp,image/jpg"
-                            onChange={handleFileChange}
-                            className="hidden"
-                          />
-                        </label>
-                        <button
-                          type="button"
-                          onClick={handleRemovePhoto}
-                          className="px-2.5 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold shadow-xs transition-colors flex items-center gap-1"
-                          title="Hapus Foto"
-                        >
-                          <span className="material-symbols-outlined text-[16px]">delete</span>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <label className="border-2 border-dashed border-slate-300 hover:border-emerald-500 rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer bg-slate-50/70 hover:bg-emerald-50/30 transition-all group">
-                    <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform shadow-2xs">
-                      <span className="material-symbols-outlined text-[26px]">add_photo_alternate</span>
-                    </div>
-                    <p className="text-sm font-semibold text-slate-800 group-hover:text-emerald-800 transition-colors">
-                      Pilih Foto dari Perangkat / Galeri
-                    </p>
-                    <p className="text-xs text-slate-500 mt-0.5 text-center">
-                      Format JPG, PNG, atau WebP (maksimal 5 MB).
-                    </p>
-                    <input
-                      type="file"
-                      accept="image/jpeg,image/png,image/webp,image/jpg"
-                      onChange={handleFileChange}
-                      className="hidden"
-                    />
+            <form onSubmit={handleCreateSubmit} className="flex flex-col flex-1 overflow-hidden">
+              <div className="p-6 space-y-4 overflow-y-auto flex-1">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Judul Berita *
                   </label>
-                )}
-
-                {/* Alternatif URL gambar */}
-                <div className="mt-2.5 flex items-center gap-2">
-                  <span className="text-[11px] text-slate-400 shrink-0">Atau tautan URL:</span>
                   <input
                     type="text"
-                    value={formData.gambar_thumbnail}
-                    onChange={(e) => {
-                      setFormData({ ...formData, gambar_thumbnail: e.target.value })
-                      if (e.target.value && !photoFile) {
-                        setPhotoPreview(e.target.value)
-                      }
-                    }}
-                    placeholder="https://..."
-                    className="flex-1 rounded-md border border-slate-200 px-2 py-1 text-xs focus:ring-1 focus:ring-emerald-500 outline-none placeholder:text-slate-400"
+                    required
+                    value={formData.judul}
+                    onChange={(e) => setFormData({ ...formData, judul: e.target.value })}
+                    placeholder="Contoh: Siswa MI Meraih Juara 1 Tahfidz Tingkat Kabupaten"
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all placeholder:text-slate-400"
                   />
+                </div>
+
+                {/* Kategori Berita & Tanggal Publikasi */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Kategori Berita *
+                    </label>
+                    <select
+                      value={formData.kategori}
+                      onChange={(e) => setFormData({ ...formData, kategori: e.target.value })}
+                      className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all bg-white"
+                    >
+                      <option value="Kegiatan">Kegiatan</option>
+                      <option value="Prestasi">Prestasi</option>
+                      <option value="Pengumuman">Pengumuman</option>
+                    </select>
+                    <p className="text-[11px] text-slate-400 mt-1">
+                      Tentukan filter &amp; badge berita di halaman publik.
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Tanggal Publikasi
+                    </label>
+                    <input
+                      type="date"
+                      value={formData.tgl_publish}
+                      onChange={(e) => setFormData({ ...formData, tgl_publish: e.target.value })}
+                      className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
+                    />
+                    <p className="text-[11px] text-slate-400 mt-1">
+                      Waktu tanggal rilis berita.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Upload Foto / Thumbnail */}
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                    Foto Dokumentasi / Thumbnail Berita
+                  </label>
+
+                  {photoPreview ? (
+                    <div className="relative rounded-xl border border-slate-200 overflow-hidden bg-slate-900 group shadow-xs">
+                      <img
+                        src={photoPreview}
+                        alt="Pratinjau foto berita"
+                        className="w-full h-44 sm:h-52 object-cover opacity-90 group-hover:opacity-100 transition-opacity"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-transparent to-transparent flex items-end justify-between p-3 sm:p-4">
+                        <div className="text-white text-xs">
+                          <span className="font-semibold block truncate max-w-[200px] sm:max-w-xs">
+                            {photoFile ? photoFile.name : 'Foto Berita Terpilih'}
+                          </span>
+                          {photoFile && (
+                            <span className="text-[11px] text-slate-300">
+                              {(photoFile.size / 1024).toFixed(0)} KB • Foto dari perangkat
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <label className="cursor-pointer px-3 py-1.5 rounded-lg bg-white/95 hover:bg-white text-slate-800 text-xs font-semibold shadow-xs transition-colors flex items-center gap-1">
+                            <span className="material-symbols-outlined text-[16px]">sync</span>
+                            <span>Ganti Foto</span>
+                            <input
+                              type="file"
+                              accept="image/jpeg,image/png,image/webp,image/jpg"
+                              onChange={handleFileChange}
+                              className="hidden"
+                            />
+                          </label>
+                          <button
+                            type="button"
+                            onClick={handleRemovePhoto}
+                            className="px-2.5 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold shadow-xs transition-colors flex items-center gap-1"
+                            title="Hapus Foto"
+                          >
+                            <span className="material-symbols-outlined text-[16px]">delete</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <label className="border-2 border-dashed border-slate-300 hover:border-emerald-500 rounded-xl p-5 flex flex-col items-center justify-center cursor-pointer bg-slate-50/70 hover:bg-emerald-50/30 transition-all group">
+                      <div className="w-11 h-11 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform shadow-2xs">
+                        <span className="material-symbols-outlined text-[24px]">add_photo_alternate</span>
+                      </div>
+                      <p className="text-sm font-semibold text-slate-800 group-hover:text-emerald-800 transition-colors">
+                        Pilih Foto dari Perangkat / Galeri
+                      </p>
+                      <p className="text-xs text-slate-500 mt-0.5 text-center">
+                        Format JPG, PNG, atau WebP (maksimal 5 MB).
+                      </p>
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp,image/jpg"
+                        onChange={handleFileChange}
+                        className="hidden"
+                      />
+                    </label>
+                  )}
+
+                  {/* Alternatif URL gambar */}
+                  <div className="mt-2.5 flex items-center gap-2">
+                    <span className="text-[11px] text-slate-400 shrink-0">Atau tautan URL:</span>
+                    <input
+                      type="text"
+                      value={formData.gambar_thumbnail}
+                      onChange={(e) => {
+                        setFormData({ ...formData, gambar_thumbnail: e.target.value })
+                        if (e.target.value && !photoFile) {
+                          setPhotoPreview(e.target.value)
+                        }
+                      }}
+                      placeholder="https://..."
+                      className="flex-1 rounded-md border border-slate-200 px-2 py-1 text-xs focus:ring-1 focus:ring-emerald-500 outline-none placeholder:text-slate-400"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Isi Konten Berita *
+                  </label>
+                  <textarea
+                    rows="6"
+                    required
+                    value={formData.isi_konten}
+                    onChange={(e) => setFormData({ ...formData, isi_konten: e.target.value })}
+                    placeholder="Tuliskan isi berita lengkap di sini. Gunakan baris baru untuk memisahkan paragraf..."
+                    className="w-full rounded-lg border border-slate-300 p-3 text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all placeholder:text-slate-400"
+                  ></textarea>
+                  <span className="text-[11px] text-slate-400 mt-1 block">
+                    Karakter: {formData.isi_konten.length}
+                  </span>
                 </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Isi Konten Berita *
-                </label>
-                <textarea
-                  rows="6"
-                  required
-                  value={formData.isi_konten}
-                  onChange={(e) => setFormData({ ...formData, isi_konten: e.target.value })}
-                  placeholder="Tuliskan isi berita lengkap di sini. Gunakan baris baru untuk memisahkan paragraf..."
-                  className="w-full rounded-lg border border-slate-300 p-3 text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
-                ></textarea>
-                <span className="text-[11px] text-slate-400 mt-1 block">
-                  Karakter: {formData.isi_konten.length}
-                </span>
-              </div>
-
-              <div className="pt-4 border-t border-slate-200 flex items-center justify-end gap-3">
+              {/* Modal Footer (Pinned) */}
+              <div className="px-6 py-3.5 border-t border-slate-200 bg-slate-50 flex items-center justify-end gap-3 shrink-0">
                 <button
                   type="button"
                   onClick={() => setIsCreateOpen(false)}
-                  className="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 font-medium text-xs hover:bg-slate-50 transition-colors"
+                  className="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 font-medium text-xs hover:bg-slate-100 transition-colors"
                 >
                   Batal
                 </button>
@@ -665,153 +755,182 @@ export default function AdminBerita() {
 
       {/* MODAL: EDIT BERITA */}
       {isEditOpen && selectedArticle && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-slate-200 flex items-center justify-between">
+        <div className="fixed inset-0 z-[100] bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-fade-in">
+          <div className="relative w-full max-w-2xl bg-white rounded-2xl border border-slate-200 shadow-2xl flex flex-col my-auto max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-3.5rem)] overflow-hidden animate-modal-pop">
+            <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-white shrink-0">
               <div>
-                <h3 className="font-bold text-lg text-slate-900">Edit Berita (ID: {selectedArticle.id_berita})</h3>
-                <p className="text-xs text-slate-500">Perbarui rincian berita madrasah.</p>
+                <h3 className="font-bold text-base sm:text-lg text-slate-900">Edit Berita (ID: {selectedArticle.id_berita})</h3>
+                <p className="text-xs text-slate-500 mt-0.5">Perbarui rincian warta madrasah.</p>
               </div>
               <button
+                type="button"
                 onClick={() => setIsEditOpen(false)}
-                className="text-slate-400 hover:text-slate-600 p-1 rounded-lg"
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+                title="Tutup Modal"
               >
                 <span className="material-symbols-outlined text-[20px]">close</span>
               </button>
             </div>
 
-            <form onSubmit={handleEditSubmit} className="p-6 space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Judul Berita *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.judul}
-                  onChange={(e) => setFormData({ ...formData, judul: e.target.value })}
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Tanggal Publikasi
-                </label>
-                <input
-                  type="date"
-                  value={formData.tgl_publish}
-                  onChange={(e) => setFormData({ ...formData, tgl_publish: e.target.value })}
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
-                />
-              </div>
-
-              {/* Upload Foto / Thumbnail */}
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                  Foto Dokumentasi / Thumbnail Berita
-                </label>
-
-                {photoPreview ? (
-                  <div className="relative rounded-xl border border-slate-200 overflow-hidden bg-slate-900 group shadow-xs">
-                    <img
-                      src={photoPreview}
-                      alt="Pratinjau foto berita"
-                      className="w-full h-48 sm:h-56 object-cover opacity-90 group-hover:opacity-100 transition-opacity"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-transparent to-transparent flex items-end justify-between p-3 sm:p-4">
-                      <div className="text-white text-xs">
-                        <span className="font-semibold block truncate max-w-[200px] sm:max-w-xs">
-                          {photoFile ? photoFile.name : 'Foto Berita Terpasang'}
-                        </span>
-                        {photoFile ? (
-                          <span className="text-[11px] text-slate-300">
-                            {(photoFile.size / 1024).toFixed(0)} KB • Foto baru dari perangkat
-                          </span>
-                        ) : (
-                          <span className="text-[11px] text-emerald-300 font-medium">
-                            Foto aktif saat ini
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <label className="cursor-pointer px-3 py-1.5 rounded-lg bg-white/95 hover:bg-white text-slate-800 text-xs font-semibold shadow-xs transition-colors flex items-center gap-1">
-                          <span className="material-symbols-outlined text-[16px]">sync</span>
-                          <span>Ganti Foto</span>
-                          <input
-                            type="file"
-                            accept="image/jpeg,image/png,image/webp,image/jpg"
-                            onChange={handleFileChange}
-                            className="hidden"
-                          />
-                        </label>
-                        <button
-                          type="button"
-                          onClick={handleRemovePhoto}
-                          className="px-2.5 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold shadow-xs transition-colors flex items-center gap-1"
-                          title="Hapus Foto"
-                        >
-                          <span className="material-symbols-outlined text-[16px]">delete</span>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <label className="border-2 border-dashed border-slate-300 hover:border-emerald-500 rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer bg-slate-50/70 hover:bg-emerald-50/30 transition-all group">
-                    <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform shadow-2xs">
-                      <span className="material-symbols-outlined text-[26px]">add_photo_alternate</span>
-                    </div>
-                    <p className="text-sm font-semibold text-slate-800 group-hover:text-emerald-800 transition-colors">
-                      Pilih Foto Baru dari Perangkat / Galeri
-                    </p>
-                    <p className="text-xs text-slate-500 mt-0.5 text-center">
-                      Format JPG, PNG, atau WebP (maksimal 5 MB).
-                    </p>
-                    <input
-                      type="file"
-                      accept="image/jpeg,image/png,image/webp,image/jpg"
-                      onChange={handleFileChange}
-                      className="hidden"
-                    />
+            <form onSubmit={handleEditSubmit} className="flex flex-col flex-1 overflow-hidden">
+              <div className="p-6 space-y-4 overflow-y-auto flex-1">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Judul Berita *
                   </label>
-                )}
-
-                {/* Alternatif URL gambar */}
-                <div className="mt-2.5 flex items-center gap-2">
-                  <span className="text-[11px] text-slate-400 shrink-0">Atau tautan URL:</span>
                   <input
                     type="text"
-                    value={formData.gambar_thumbnail}
-                    onChange={(e) => {
-                      setFormData({ ...formData, gambar_thumbnail: e.target.value })
-                      if (e.target.value && !photoFile) {
-                        setPhotoPreview(e.target.value)
-                      }
-                    }}
-                    placeholder="https://..."
-                    className="flex-1 rounded-md border border-slate-200 px-2 py-1 text-xs focus:ring-1 focus:ring-emerald-500 outline-none placeholder:text-slate-400"
+                    required
+                    value={formData.judul}
+                    onChange={(e) => setFormData({ ...formData, judul: e.target.value })}
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
                   />
+                </div>
+
+                {/* Kategori Berita & Tanggal Publikasi */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Kategori Berita *
+                    </label>
+                    <select
+                      value={formData.kategori}
+                      onChange={(e) => setFormData({ ...formData, kategori: e.target.value })}
+                      className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all bg-white"
+                    >
+                      <option value="Kegiatan">Kegiatan</option>
+                      <option value="Prestasi">Prestasi</option>
+                      <option value="Pengumuman">Pengumuman</option>
+                    </select>
+                    <p className="text-[11px] text-slate-400 mt-1">
+                      Tentukan filter &amp; badge berita di halaman publik.
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Tanggal Publikasi
+                    </label>
+                    <input
+                      type="date"
+                      value={formData.tgl_publish}
+                      onChange={(e) => setFormData({ ...formData, tgl_publish: e.target.value })}
+                      className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
+                    />
+                    <p className="text-[11px] text-slate-400 mt-1">
+                      Waktu tanggal rilis berita.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Upload Foto / Thumbnail */}
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                    Foto Dokumentasi / Thumbnail Berita
+                  </label>
+
+                  {photoPreview ? (
+                    <div className="relative rounded-xl border border-slate-200 overflow-hidden bg-slate-900 group shadow-xs">
+                      <img
+                        src={photoPreview}
+                        alt="Pratinjau foto berita"
+                        className="w-full h-44 sm:h-52 object-cover opacity-90 group-hover:opacity-100 transition-opacity"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-transparent to-transparent flex items-end justify-between p-3 sm:p-4">
+                        <div className="text-white text-xs">
+                          <span className="font-semibold block truncate max-w-[200px] sm:max-w-xs">
+                            {photoFile ? photoFile.name : 'Foto Berita Terpasang'}
+                          </span>
+                          {photoFile ? (
+                            <span className="text-[11px] text-slate-300">
+                              {(photoFile.size / 1024).toFixed(0)} KB • Foto baru dari perangkat
+                            </span>
+                          ) : (
+                            <span className="text-[11px] text-emerald-300 font-medium">
+                              Foto aktif saat ini
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <label className="cursor-pointer px-3 py-1.5 rounded-lg bg-white/95 hover:bg-white text-slate-800 text-xs font-semibold shadow-xs transition-colors flex items-center gap-1">
+                            <span className="material-symbols-outlined text-[16px]">sync</span>
+                            <span>Ganti Foto</span>
+                            <input
+                              type="file"
+                              accept="image/jpeg,image/png,image/webp,image/jpg"
+                              onChange={handleFileChange}
+                              className="hidden"
+                            />
+                          </label>
+                          <button
+                            type="button"
+                            onClick={handleRemovePhoto}
+                            className="px-2.5 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold shadow-xs transition-colors flex items-center gap-1"
+                            title="Hapus Foto"
+                          >
+                            <span className="material-symbols-outlined text-[16px]">delete</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <label className="border-2 border-dashed border-slate-300 hover:border-emerald-500 rounded-xl p-5 flex flex-col items-center justify-center cursor-pointer bg-slate-50/70 hover:bg-emerald-50/30 transition-all group">
+                      <div className="w-11 h-11 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform shadow-2xs">
+                        <span className="material-symbols-outlined text-[24px]">add_photo_alternate</span>
+                      </div>
+                      <p className="text-sm font-semibold text-slate-800 group-hover:text-emerald-800 transition-colors">
+                        Pilih Foto Baru dari Perangkat / Galeri
+                      </p>
+                      <p className="text-xs text-slate-500 mt-0.5 text-center">
+                        Format JPG, PNG, atau WebP (maksimal 5 MB).
+                      </p>
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp,image/jpg"
+                        onChange={handleFileChange}
+                        className="hidden"
+                      />
+                    </label>
+                  )}
+
+                  {/* Alternatif URL gambar */}
+                  <div className="mt-2.5 flex items-center gap-2">
+                    <span className="text-[11px] text-slate-400 shrink-0">Atau tautan URL:</span>
+                    <input
+                      type="text"
+                      value={formData.gambar_thumbnail}
+                      onChange={(e) => {
+                        setFormData({ ...formData, gambar_thumbnail: e.target.value })
+                        if (e.target.value && !photoFile) {
+                          setPhotoPreview(e.target.value)
+                        }
+                      }}
+                      placeholder="https://..."
+                      className="flex-1 rounded-md border border-slate-200 px-2 py-1 text-xs focus:ring-1 focus:ring-emerald-500 outline-none placeholder:text-slate-400"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Isi Konten Berita *
+                  </label>
+                  <textarea
+                    rows="6"
+                    required
+                    value={formData.isi_konten}
+                    onChange={(e) => setFormData({ ...formData, isi_konten: e.target.value })}
+                    className="w-full rounded-lg border border-slate-300 p-3 text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
+                  ></textarea>
                 </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Isi Konten Berita *
-                </label>
-                <textarea
-                  rows="6"
-                  required
-                  value={formData.isi_konten}
-                  onChange={(e) => setFormData({ ...formData, isi_konten: e.target.value })}
-                  className="w-full rounded-lg border border-slate-300 p-3 text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
-                ></textarea>
-              </div>
-
-              <div className="pt-4 border-t border-slate-200 flex items-center justify-end gap-3">
+              {/* Modal Footer (Pinned) */}
+              <div className="px-6 py-3.5 border-t border-slate-200 bg-slate-50 flex items-center justify-end gap-3 shrink-0">
                 <button
                   type="button"
                   onClick={() => setIsEditOpen(false)}
-                  className="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 font-medium text-xs hover:bg-slate-50 transition-colors"
+                  className="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 font-medium text-xs hover:bg-slate-100 transition-colors"
                 >
                   Batal
                 </button>
@@ -835,8 +954,8 @@ export default function AdminBerita() {
 
       {/* MODAL: HAPUS BERITA */}
       {isDeleteOpen && selectedArticle && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-md w-full p-6 space-y-4">
+        <div className="fixed inset-0 z-[100] bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto animate-fade-in">
+          <div className="relative w-full max-w-md bg-white rounded-2xl border border-slate-200 shadow-2xl p-6 space-y-4 my-auto animate-modal-pop">
             <div className="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto">
               <span className="material-symbols-outlined text-[28px]">delete_forever</span>
             </div>
@@ -858,7 +977,7 @@ export default function AdminBerita() {
               <button
                 type="button"
                 onClick={() => setIsDeleteOpen(false)}
-                className="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 font-medium text-xs hover:bg-slate-50 transition-colors"
+                className="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 font-medium text-xs hover:bg-slate-100 transition-colors"
               >
                 Batal
               </button>

@@ -49,7 +49,7 @@ export default function AdminDashboard() {
     {
       title: 'Total Siswa Aktif',
       value: stats.total_siswa,
-      unit: 'Santri',
+      unit: 'Siswa',
       icon: 'school',
       color: 'bg-emerald-500/10 text-emerald-700 border-emerald-200',
       href: '/admin/siswa',
@@ -115,7 +115,7 @@ export default function AdminDashboard() {
   const quickActions = [
     {
       title: 'Kelola Rombel & Siswa',
-      desc: 'Atur pembagian santri ke rombel dan tentukan wali kelas.',
+      desc: 'Atur pembagian Siswa ke rombel dan tentukan wali kelas.',
       icon: 'groups',
       href: '/admin/rombel',
       btnColor: 'bg-emerald-600 hover:bg-emerald-700 text-white',
@@ -136,14 +136,14 @@ export default function AdminDashboard() {
     },
     {
       title: 'Tulis Warta Baru',
-      desc: 'Publikasikan kabar madrasah atau prestasi santri.',
+      desc: 'Publikasikan kabar madrasah atau prestasi Siswa.',
       icon: 'edit_document',
       href: '/admin/berita',
       btnColor: 'bg-slate-800 hover:bg-slate-900 text-white',
     },
     {
       title: 'Report Peminjaman',
-      desc: 'Rekapitulasi sirkulasi santri, status pengembalian, & denda.',
+      desc: 'Rekapitulasi sirkulasi Siswa, status pengembalian, & denda.',
       icon: 'receipt_long',
       href: '/admin/report',
       btnColor: 'bg-emerald-800 hover:bg-emerald-900 text-white',
@@ -179,7 +179,7 @@ export default function AdminDashboard() {
             Selamat Datang di Panel MI Roudotutta'lim
           </h2>
           <p className="text-xs sm:text-sm text-slate-300 mt-2 leading-relaxed">
-            Kelola master data madrasah, cetak kartu santri dengan kode QR terpadu, dan sinkronkan publikasi warta madrasah langsung ke website publik.
+            Kelola master data madrasah, cetak kartu Siswa dengan kode QR terpadu, dan sinkronkan publikasi warta madrasah langsung ke website publik.
           </p>
         </div>
       </div>

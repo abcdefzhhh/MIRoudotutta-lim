@@ -1,4 +1,6 @@
 
+import { Link } from 'react-router-dom'
+
 export default function Hero() {
   return (
     <>
@@ -31,13 +33,13 @@ export default function Hero() {
 
             {/* CTAs: Gold Primary & White Outline Secondary */}
             <div className="flex flex-wrap items-center gap-space-md pt-space-sm w-full sm:w-auto">
-              <a
+              <Link
                 className="inline-flex items-center justify-center gap-space-sm font-label-lg text-label-lg px-8 py-3.5 rounded-full bg-gold text-ink font-bold shadow-lg hover:bg-gold-soft active:scale-[0.98] transition-all transform hover:-translate-y-1 hover:shadow-xl"
-                href="#ppdb"
+                to="/ppdb"
               >
-                <span>Daftar PPDB Online</span>
+                <span>Informasi PPDB</span>
                 <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
-              </a>
+              </Link>
               <a
                 className="inline-flex items-center justify-center gap-space-sm font-label-lg text-label-lg px-7 py-3.5 rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/30 backdrop-blur-md active:scale-[0.98] transition-all transform hover:-translate-y-0.5"
                 href="#tentang-kami"

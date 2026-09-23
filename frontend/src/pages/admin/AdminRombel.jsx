@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
 import BatchQrCardsModal from '../../components/BatchQrCardsModal'
@@ -88,6 +88,9 @@ export default function AdminRombel() {
   const [availableSiswa, setAvailableSiswa] = useState([])
   const [selectedSiswaId, setSelectedSiswaId] = useState('')
   const [loadingAnggota, setLoadingAnggota] = useState(false)
+  const [searchAvailableSiswa, setSearchAvailableSiswa] = useState('')
+  const [searchAnggotaQuery, setSearchAnggotaQuery] = useState('')
+  const [addingSiswaId, setAddingSiswaId] = useState(null)
 
   // Form states (Rombel)
   const [formData, setFormData] = useState({
@@ -261,6 +264,9 @@ export default function AdminRombel() {
     setIsAnggotaOpen(true)
     setLoadingAnggota(true)
     setSelectedSiswaId('')
+    setSearchAvailableSiswa('')
+    setSearchAnggotaQuery('')
+    setAddingSiswaId(null)
     try {
       const [resDetail, resAvailable] = await Promise.all([
         axios.get(`http://127.0.0.1:8000/api/rombel/${item.idkelasdetail}`),
@@ -281,28 +287,44 @@ export default function AdminRombel() {
     }
   }
 
-  // Add Siswa to Rombel
-  const handleAddSiswa = async (e) => {
-    e.preventDefault()
-    if (!selectedRombel || !selectedSiswaId) return
-    setSubmitting(true)
+  // Add Siswa to Rombel (supports 1-click direct add or form submit)
+  const handleAddSiswa = async (e, directId = null, studentName = '') => {
+    if (e && e.preventDefault) e.preventDefault()
+    const targetId = directId || selectedSiswaId
+    if (!selectedRombel || !targetId) return
+
+    setAddingSiswaId(targetId)
     try {
       const res = await axios.post(
         `http://127.0.0.1:8000/api/rombel/${selectedRombel.idkelasdetail}/siswa`,
-        { idsiswa: selectedSiswaId }
+        { idsiswa: targetId }
       )
       if (res.data && res.data.success) {
-        showToast('Siswa berhasil ditambahkan ke rombel.', 'success')
+        showToast(
+          studentName
+            ? `${studentName} berhasil dimasukkan ke rombel.`
+            : 'Siswa berhasil ditambahkan ke rombel.',
+          'success'
+        )
         setSelectedSiswaId('')
-        // Refresh anggota
-        openAnggotaModal(selectedRombel)
+        // Refresh data anggota & available secara paralel
+        const [resDetail, resAvailable] = await Promise.all([
+          axios.get(`http://127.0.0.1:8000/api/rombel/${selectedRombel.idkelasdetail}`),
+          axios.get(`http://127.0.0.1:8000/api/rombel/${selectedRombel.idkelasdetail}/available-siswa`),
+        ])
+        if (resDetail.data && resDetail.data.success) {
+          setAnggotaSiswa(resDetail.data.data?.siswa_kelas || [])
+        }
+        if (resAvailable.data && resAvailable.data.success) {
+          setAvailableSiswa(resAvailable.data.data || [])
+        }
         fetchRombel()
       }
     } catch (err) {
       const msg = err.response?.data?.message || 'Gagal menambahkan siswa.'
       showToast(msg, 'error')
     } finally {
-      setSubmitting(false)
+      setAddingSiswaId(null)
     }
   }
 
@@ -356,6 +378,30 @@ export default function AdminRombel() {
       filterTingkat === 'Semua' || String(item.kelas?.tingkat) === String(filterTingkat)
     return matchesSearch && matchesTingkat
   })
+
+  // Filter siswa yang belum masuk rombel untuk fitur search pencarian cepat
+  const filteredAvailableSiswa = useMemo(() => {
+    if (!searchAvailableSiswa.trim()) return []
+    const q = searchAvailableSiswa.toLowerCase().trim()
+    return availableSiswa.filter(
+      (s) =>
+        s.nama?.toLowerCase().includes(q) ||
+        s.nis?.toLowerCase().includes(q) ||
+        (s.nisn && s.nisn.toLowerCase().includes(q))
+    )
+  }, [availableSiswa, searchAvailableSiswa])
+
+  // Filter daftar siswa yang sudah terdaftar di rombel ini
+  const filteredAnggotaSiswa = useMemo(() => {
+    if (!searchAnggotaQuery.trim()) return anggotaSiswa
+    const q = searchAnggotaQuery.toLowerCase().trim()
+    return anggotaSiswa.filter((item) => {
+      const nama = item.siswa?.nama?.toLowerCase() || ''
+      const nis = item.siswa?.nis?.toLowerCase() || ''
+      const nisn = item.siswa?.nisn?.toLowerCase() || ''
+      return nama.includes(q) || nis.includes(q) || nisn.includes(q)
+    })
+  }, [anggotaSiswa, searchAnggotaQuery])
 
   const totalSiswaRombel = rombelList.reduce((acc, curr) => acc + (curr.total_siswa || 0), 0)
 
@@ -681,8 +727,8 @@ export default function AdminRombel() {
 
       {/* MODAL: KELOLA ANGGOTA SISWA ROMBEL */}
       {isAnggotaOpen && selectedRombel && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden">
+        <div className="fixed inset-0 z-[100] bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-fade-in">
+          <div className="relative w-full max-w-2xl bg-white rounded-2xl border border-slate-200 shadow-2xl max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-3.5rem)] flex flex-col overflow-hidden my-auto animate-modal-pop">
             {/* Modal Header */}
             <div className="p-6 border-b border-slate-200 flex items-center justify-between shrink-0">
               <div>
@@ -703,48 +749,172 @@ export default function AdminRombel() {
 
             {/* Modal Body */}
             <div className="p-6 space-y-6 overflow-y-auto flex-1">
-              {/* Form Tambah Siswa ke Rombel */}
-              <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2 flex items-center gap-1.5">
-                  <span className="material-symbols-outlined text-[16px] text-emerald-600">person_add</span>
-                  <span>Masukkan Siswa Baru ke Rombel Ini</span>
-                </h4>
+              {/* Form & Pencarian Tambah Siswa ke Rombel */}
+              <div className="bg-slate-50/90 border border-slate-200 rounded-xl p-4 sm:p-5 space-y-3">
+                <div className="flex items-center justify-between gap-2">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+                    <span className="material-symbols-outlined text-[17px] text-emerald-600">person_search</span>
+                    <span>Cari &amp; Masukkan Siswa ke Rombel</span>
+                  </h4>
+                  <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full shrink-0">
+                    {availableSiswa.length} Siswa Tersedia
+                  </span>
+                </div>
 
-                <form onSubmit={handleAddSiswa} className="flex flex-col sm:flex-row gap-2.5">
-                  <select
-                    required
-                    value={selectedSiswaId}
-                    onChange={(e) => setSelectedSiswaId(e.target.value)}
-                    className="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none bg-white"
-                  >
-                    <option value="">-- Pilih Siswa yang Belum Ada di Rombel ({availableSiswa.length} siswa) --</option>
-                    {availableSiswa.map((s) => (
-                      <option key={s.idsiswa} value={s.idsiswa}>
-                        {s.nama} (NIS: {s.nis})
-                      </option>
-                    ))}
-                  </select>
+                {/* Input Pencarian Siswa */}
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                    <span className="material-symbols-outlined text-[20px]">search</span>
+                  </div>
+                  <input
+                    type="text"
+                    value={searchAvailableSiswa}
+                    onChange={(e) => setSearchAvailableSiswa(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault()
+                        if (filteredAvailableSiswa.length > 0 && !addingSiswaId) {
+                          const topStudent = filteredAvailableSiswa[0]
+                          handleAddSiswa(null, topStudent.idsiswa, topStudent.nama)
+                        }
+                      }
+                    }}
+                    placeholder={`Ketik nama atau NIS santri... (tersedia ${availableSiswa.length} siswa)`}
+                    className="w-full pl-10 pr-10 py-2.5 rounded-lg border border-slate-300 bg-white text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all shadow-2xs"
+                  />
+                  {searchAvailableSiswa && (
+                    <button
+                      type="button"
+                      onClick={() => setSearchAvailableSiswa('')}
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600"
+                      title="Hapus pencarian"
+                    >
+                      <span className="material-symbols-outlined text-[18px]">close</span>
+                    </button>
+                  )}
+                </div>
 
-                  <button
-                    type="submit"
-                    disabled={submitting || !selectedSiswaId}
-                    className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-sm transition-all active:scale-[0.98] disabled:opacity-50 shrink-0 flex items-center justify-center gap-1.5"
-                  >
-                    {submitting && (
-                      <span className="material-symbols-outlined text-[16px] animate-spin">sync</span>
+                {/* Hasil Pencarian Siswa yang Belum Ada di Rombel */}
+                {searchAvailableSiswa.trim() ? (
+                  <div className="space-y-2 pt-1">
+                    <div className="flex items-center justify-between text-xs text-slate-500 px-1">
+                      <span>
+                        Hasil Pencarian:{' '}
+                        <strong className="text-slate-800 font-semibold">{filteredAvailableSiswa.length}</strong> siswa
+                        {filteredAvailableSiswa.length > 8 && ' (menampilkan 8 teratas)'}
+                      </span>
+                      {filteredAvailableSiswa.length > 0 && (
+                        <span className="text-[11px] text-slate-400 hidden sm:inline">
+                          Tekan <kbd className="px-1.5 py-0.5 bg-slate-200 text-slate-700 rounded text-[10px] font-mono">Enter</kbd> untuk langsung masukkan siswa teratas
+                        </span>
+                      )}
+                    </div>
+
+                    {filteredAvailableSiswa.length === 0 ? (
+                      <div className="p-4 bg-white border border-dashed border-slate-200 rounded-xl text-center">
+                        <span className="material-symbols-outlined text-[26px] text-slate-300">person_off</span>
+                        <p className="text-xs font-semibold text-slate-600 mt-1">
+                          Tidak ditemukan siswa dengan kata kunci "{searchAvailableSiswa}"
+                        </p>
+                        <p className="text-[11px] text-slate-400 mt-0.5">
+                          Coba cari dengan NIS atau ejaan nama lain.
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="bg-white border border-slate-200 rounded-xl divide-y divide-slate-100 max-h-56 overflow-y-auto shadow-2xs">
+                        {filteredAvailableSiswa.slice(0, 8).map((s) => (
+                          <div
+                            key={s.idsiswa}
+                            className="p-2.5 sm:px-3 flex items-center justify-between gap-2 hover:bg-emerald-50/50 transition-colors"
+                          >
+                            <div className="flex items-center gap-2.5 min-w-0">
+                              <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 font-bold text-xs flex items-center justify-center shrink-0">
+                                {s.nama ? s.nama.charAt(0).toUpperCase() : 'S'}
+                              </div>
+                              <div className="min-w-0">
+                                <div className="font-semibold text-xs sm:text-sm text-slate-900 truncate">
+                                  {s.nama}
+                                </div>
+                                <div className="text-[11px] text-slate-500 font-mono">
+                                  NIS: {s.nis} {s.nisn ? `• NISN: ${s.nisn}` : ''}
+                                </div>
+                              </div>
+                            </div>
+
+                            <button
+                              type="button"
+                              disabled={addingSiswaId === s.idsiswa}
+                              onClick={() => handleAddSiswa(null, s.idsiswa, s.nama)}
+                              className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-2xs transition-all active:scale-[0.98] disabled:opacity-50 shrink-0 flex items-center gap-1"
+                              title={`Masukkan ${s.nama} ke rombel`}
+                            >
+                              {addingSiswaId === s.idsiswa ? (
+                                <>
+                                  <span className="material-symbols-outlined text-[14px] animate-spin">sync</span>
+                                  <span>Menambahkan...</span>
+                                </>
+                              ) : (
+                                <>
+                                  <span className="material-symbols-outlined text-[15px]">person_add</span>
+                                  <span>+ Masukkan</span>
+                                </>
+                              )}
+                            </button>
+                          </div>
+                        ))}
+                      </div>
                     )}
-                    <span>+ Masukkan</span>
-                  </button>
-                </form>
+                  </div>
+                ) : (
+                  <div className="p-3 bg-white border border-slate-200/70 rounded-lg flex items-center gap-2.5 text-xs text-slate-500">
+                    <span className="material-symbols-outlined text-[18px] text-emerald-600 shrink-0">lightbulb</span>
+                    <span>
+                      Ketik nama siswa atau nomor NIS di kolom pencarian di atas untuk memasukkan siswa ke rombel ini dengan cepat.
+                    </span>
+                  </div>
+                )}
               </div>
 
               {/* Daftar Siswa Saat Ini */}
               <div>
-                <div className="flex items-center justify-between mb-3">
-                  <h4 className="text-sm font-bold text-slate-900">
-                    Daftar Siswa Terdaftar ({anggotaSiswa.length} Siswa)
-                  </h4>
-                  <span className="text-xs text-slate-500">Urut berdasarkan nama</span>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                  <div>
+                    <h4 className="text-sm font-bold text-slate-900">
+                      Daftar Siswa Terdaftar ({anggotaSiswa.length} Siswa)
+                    </h4>
+                    <p className="text-xs text-slate-500">
+                      {searchAnggotaQuery.trim() ? (
+                        <span>Menampilkan {filteredAnggotaSiswa.length} dari {anggotaSiswa.length} siswa</span>
+                      ) : (
+                        <span>Urut berdasarkan nama</span>
+                      )}
+                    </p>
+                  </div>
+
+                  {anggotaSiswa.length > 5 && (
+                    <div className="relative sm:w-56">
+                      <span className="material-symbols-outlined text-[16px] text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none">
+                        search
+                      </span>
+                      <input
+                        type="text"
+                        value={searchAnggotaQuery}
+                        onChange={(e) => setSearchAnggotaQuery(e.target.value)}
+                        placeholder="Cari di rombel ini..."
+                        className="w-full pl-8 pr-7 py-1.5 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 bg-white"
+                      />
+                      {searchAnggotaQuery && (
+                        <button
+                          type="button"
+                          onClick={() => setSearchAnggotaQuery('')}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs"
+                          title="Bersihkan filter"
+                        >
+                          ✕
+                        </button>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {loadingAnggota ? (
@@ -756,11 +926,18 @@ export default function AdminRombel() {
                   <div className="p-8 text-center border-2 border-dashed border-slate-200 rounded-xl">
                     <span className="material-symbols-outlined text-[28px] text-slate-400">group_off</span>
                     <p className="text-sm font-semibold text-slate-700 mt-1">Belum ada siswa di rombel ini</p>
-                    <p className="text-xs text-slate-400 mt-0.5">Pilih siswa di atas untuk memasukkan siswa pertama.</p>
+                    <p className="text-xs text-slate-400 mt-0.5">Ketik nama atau NIS pada kotak pencarian di atas untuk memasukkan siswa pertama.</p>
+                  </div>
+                ) : filteredAnggotaSiswa.length === 0 ? (
+                  <div className="p-6 text-center border border-dashed border-slate-200 rounded-xl bg-slate-50">
+                    <span className="material-symbols-outlined text-[24px] text-slate-400">search_off</span>
+                    <p className="text-xs font-semibold text-slate-600 mt-1">
+                      Tidak ada siswa di rombel ini yang cocok dengan "{searchAnggotaQuery}"
+                    </p>
                   </div>
                 ) : (
                   <div className="border border-slate-200 rounded-xl overflow-hidden divide-y divide-slate-200 max-h-72 overflow-y-auto">
-                    {anggotaSiswa.map((item, idx) => (
+                    {filteredAnggotaSiswa.map((item, idx) => (
                       <div
                         key={item.idsiswakelas || idx}
                         className="p-3 sm:px-4 flex items-center justify-between hover:bg-slate-50 transition-colors"
@@ -807,8 +984,8 @@ export default function AdminRombel() {
 
       {/* MODAL: BUKA ROMBEL BARU */}
       {isCreateOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-md w-full p-6 space-y-4">
+        <div className="fixed inset-0 z-[100] bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto animate-fade-in">
+          <div className="relative w-full max-w-md bg-white rounded-2xl border border-slate-200 shadow-2xl p-6 space-y-4 my-auto animate-modal-pop">
             <div className="flex items-center justify-between border-b border-slate-200 pb-3">
               <div>
                 <h3 className="font-bold text-lg text-slate-900">Buka Rombel Baru</h3>
@@ -906,8 +1083,8 @@ export default function AdminRombel() {
 
       {/* MODAL: EDIT ROMBEL */}
       {isEditOpen && selectedRombel && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-md w-full p-6 space-y-4">
+        <div className="fixed inset-0 z-[100] bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto animate-fade-in">
+          <div className="relative w-full max-w-md bg-white rounded-2xl border border-slate-200 shadow-2xl p-6 space-y-4 my-auto animate-modal-pop">
             <div className="flex items-center justify-between border-b border-slate-200 pb-3">
               <div>
                 <h3 className="font-bold text-lg text-slate-900">
@@ -1004,8 +1181,8 @@ export default function AdminRombel() {
 
       {/* MODAL: HAPUS ROMBEL */}
       {isDeleteOpen && selectedRombel && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-md w-full p-6 space-y-4">
+        <div className="fixed inset-0 z-[100] bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto animate-fade-in">
+          <div className="relative w-full max-w-md bg-white rounded-2xl border border-slate-200 shadow-2xl p-6 space-y-4 my-auto animate-modal-pop">
             <div className="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto">
               <span className="material-symbols-outlined text-[28px]">delete_forever</span>
             </div>
@@ -1047,8 +1224,8 @@ export default function AdminRombel() {
 
       {/* MODAL: KELOLA TAHUN AJARAN */}
       {isTahunOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-lg w-full p-6 space-y-5">
+        <div className="fixed inset-0 z-[100] bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto animate-fade-in">
+          <div className="relative w-full max-w-lg bg-white rounded-2xl border border-slate-200 shadow-2xl p-6 space-y-5 my-auto animate-modal-pop">
             <div className="flex items-center justify-between border-b border-slate-200 pb-3">
               <div>
                 <h3 className="font-bold text-lg text-slate-900">Kelola Tahun Ajaran</h3>

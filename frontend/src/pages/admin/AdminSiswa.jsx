@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-import { QRCodeSVG } from 'qrcode.react'
-import schoolLogo from '../../assets/logo.png'
-import BatchQrCardsModal from '../../components/BatchQrCardsModal'
+import BatchQrCardsModal, { StudentQrCard } from '../../components/BatchQrCardsModal'
+
 
 export default function AdminSiswa() {
   const [students, setStudents] = useState([])
@@ -212,11 +211,10 @@ export default function AdminSiswa() {
       {/* Toast Notification */}
       {toast && (
         <div
-          className={`p-4 rounded-xl text-sm flex items-center justify-between gap-3 shadow-sm border animate-fade-in ${
-            toast.type === 'error'
+          className={`p-4 rounded-xl text-sm flex items-center justify-between gap-3 shadow-sm border animate-fade-in ${toast.type === 'error'
               ? 'bg-rose-50 border-rose-200 text-rose-800'
               : 'bg-emerald-50 border-emerald-200 text-emerald-800'
-          }`}
+            }`}
         >
           <div className="flex items-center gap-2">
             <span className="material-symbols-outlined text-[20px]">
@@ -498,8 +496,8 @@ export default function AdminSiswa() {
 
       {/* MODAL: TAMBAH SISWA */}
       {isCreateOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in no-print">
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-xl max-w-md w-full p-6">
+        <div className="fixed inset-0 z-[100] bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto animate-fade-in no-print">
+          <div className="relative w-full max-w-md bg-white rounded-2xl border border-slate-200 shadow-2xl p-6 my-auto animate-modal-pop">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <h3 className="font-bold text-base text-slate-900">Tambah Siswa Baru</h3>
               <button
@@ -575,8 +573,8 @@ export default function AdminSiswa() {
 
       {/* MODAL: EDIT SISWA */}
       {isEditOpen && selectedStudent && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in no-print">
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-xl max-w-md w-full p-6">
+        <div className="fixed inset-0 z-[100] bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto animate-fade-in no-print">
+          <div className="relative w-full max-w-md bg-white rounded-2xl border border-slate-200 shadow-2xl p-6 my-auto animate-modal-pop">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <h3 className="font-bold text-base text-slate-900">Edit Data Siswa</h3>
               <button
@@ -649,8 +647,8 @@ export default function AdminSiswa() {
 
       {/* MODAL: DELETE CONFIRMATION */}
       {isDeleteOpen && selectedStudent && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in no-print">
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-xl max-w-sm w-full p-6 text-center">
+        <div className="fixed inset-0 z-[100] bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto animate-fade-in no-print">
+          <div className="relative w-full max-w-sm bg-white rounded-2xl border border-slate-200 shadow-2xl p-6 text-center my-auto animate-modal-pop">
             <div className="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto mb-3">
               <span className="material-symbols-outlined text-[24px]">delete</span>
             </div>
@@ -680,144 +678,88 @@ export default function AdminSiswa() {
         </div>
       )}
 
-      {/* MODAL: CETAK KARTU SISWA DENGAN QR CODE (Locked 8.5cm x 5.3cm) */}
+      {/* MODAL: CETAK KARTU SISWA DENGAN QR CODE */}
       {isQrCardOpen && selectedStudent && (
-        <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-lg w-full p-6 space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 no-print">
-              <div>
-                <h3 className="font-bold text-base text-slate-900">
-                  Kartu Pelajar &amp; QR Perpustakaan
-                </h3>
-                <p className="text-xs text-slate-500">
-                  Dimensi standar terkunci 8.5cm x 5.3cm (CR80) sesuai spesifikasi.
-                </p>
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 overflow-y-auto animate-fade-in"
+          style={{ background: 'rgba(2,6,23,0.85)', backdropFilter: 'blur(6px)' }}
+        >
+          <div className="relative w-full max-w-md my-auto animate-modal-pop" style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+            {/* Modal Header */}
+            <div
+              className="no-print rounded-t-2xl"
+              style={{
+                backgroundImage: [
+                  'repeating-linear-gradient(45deg, transparent 0px, transparent 18px, rgba(255,255,255,0.025) 18px, rgba(255,255,255,0.025) 19px)',
+                  'repeating-linear-gradient(-45deg, transparent 0px, transparent 18px, rgba(255,255,255,0.025) 18px, rgba(255,255,255,0.025) 19px)',
+                  'linear-gradient(135deg, #022c22 0%, #064e3b 60%, #065f46 100%)',
+                ].join(', '),
+                padding: '16px 20px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{ background: 'rgba(255,255,255,0.1)', borderRadius: '8px', padding: '6px', border: '1px solid rgba(255,255,255,0.15)' }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: '18px', color: 'rgba(167,243,208,1)' }}>badge</span>
+                </div>
+                <div>
+                  <div style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontWeight: 700, fontSize: '14px', color: '#fff' }}>Kartu Pelajar QR</div>
+                  <div style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '11px', color: 'rgba(167,243,208,0.75)' }}>8.5cm x 5.3cm · CR80 Standard</div>
+                </div>
               </div>
               <button
                 onClick={() => setIsQrCardOpen(false)}
-                className="text-slate-400 hover:text-slate-600"
+                style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '7px', padding: '5px', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.15)'; e.currentTarget.style.color = '#fff' }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; e.currentTarget.style.color = 'rgba(255,255,255,0.6)' }}
               >
-                ✕
+                <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>close</span>
               </button>
             </div>
 
-            {/* The Print Card Container (Locked 8.5cm x 5.3cm) */}
-            <div className="flex justify-center p-2 bg-slate-100 rounded-xl overflow-x-auto">
+            {/* Card Preview Stage */}
+            <div
+              style={{ background: '#0f172a', padding: '24px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+            >
               <div
                 id="printable-card"
-                className="print-area bg-white border border-slate-300 rounded-xl shadow-md p-3 relative flex flex-col justify-between overflow-hidden"
-                style={{
-                  width: '8.5cm',
-                  height: '5.3cm',
-                  boxSizing: 'border-box',
-                }}
+                className="print-area"
+                style={{ filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.5))' }}
               >
-                {/* Header Card */}
-                <div className="flex items-center gap-2 border-b border-emerald-800/30 pb-1.5 bg-gradient-to-r from-emerald-900 via-emerald-800 to-emerald-950 text-white -m-3 mb-2 px-3 py-1.5">
-                  <img
-                    src={schoolLogo}
-                    alt="Logo MI"
-                    className="w-7 h-7 object-contain drop-shadow"
-                  />
-                  <div className="leading-tight">
-                    <h4 className="font-heading font-bold text-[9px] uppercase tracking-tight text-white">
-                      MI ROUDOTUTTA'LIM BATUJAJAR
-                    </h4>
-                    <p className="text-[7.5px] text-emerald-200 font-medium tracking-wide">
-                      KARTU TANDA PELAJAR &amp; ANGGOTA SIPERPUS
-                    </p>
-                  </div>
-                </div>
-
-                {/* Body: Photo, Info, and QR Code */}
-                <div className="flex items-center justify-between gap-2 my-auto">
-                  {/* Avatar / Photo Box */}
-                  <div className="w-16 h-20 bg-slate-100 border border-slate-300 rounded flex flex-col items-center justify-center text-slate-400 shrink-0">
-                    <span className="material-symbols-outlined text-[26px]">person</span>
-                    <span className="text-[6.5px] mt-0.5 font-sans uppercase">2 x 3 cm</span>
-                  </div>
-
-                  {/* Student Details */}
-                  <div className="flex-1 text-[8.5px] space-y-0.5 leading-snug">
-                    <div>
-                      <span className="text-slate-500 block text-[7px] uppercase font-bold">
-                        Nama Siswa:
-                      </span>
-                      <span className="font-bold text-slate-900 text-[10px] leading-tight block truncate">
-                        {selectedStudent.nama}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-3">
-                      <div>
-                        <span className="text-slate-500 block text-[7px] uppercase font-bold">
-                          NIS:
-                        </span>
-                        <span className="font-mono font-bold text-emerald-800">
-                          {selectedStudent.nis}
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-slate-500 block text-[7px] uppercase font-bold">
-                          NISN:
-                        </span>
-                        <span className="font-mono text-slate-700">
-                          {selectedStudent.nisn || '-'}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div>
-                      <span className="text-slate-500 block text-[7px] uppercase font-bold">
-                        Madrasah:
-                      </span>
-                      <span className="text-slate-700 text-[7.5px]">
-                        Batujajar, Bandung Barat
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* QR Code SVG for Scanner */}
-                  <div className="flex flex-col items-center justify-center shrink-0 p-1 bg-white border border-slate-200 rounded">
-                    <QRCodeSVG
-                      value={`SISWA-${selectedStudent.nis}`}
-                      size={60}
-                      level="M"
-                    />
-                    <span className="font-mono text-[6px] text-slate-500 mt-0.5">
-                      {selectedStudent.nis}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Footer card line */}
-                <div className="border-t border-slate-200 pt-1 flex items-center justify-between text-[6.5px] text-slate-500 -mb-1">
-                  <span>Berlaku selama menjadi Siswa aktif</span>
-                  <span className="font-bold text-emerald-800">SIPERPUS Card</span>
-                </div>
+                <StudentQrCard
+                  student={selectedStudent}
+                  rombelName={selectedStudent.siswa_kelas?.[0]?.kelas_detail?.kelas?.kelas || ''}
+                />
               </div>
             </div>
 
-            {/* Actions: Print & Close */}
-            <div className="pt-3 border-t border-slate-100 flex items-center justify-between no-print">
-              <span className="text-xs text-slate-400">
-                Format siap cetak via printer biasa atau PVC ID Card.
+            {/* Footer Actions */}
+            <div
+              className="no-print rounded-b-2xl"
+              style={{ background: '#fff', borderTop: '1px solid #e2e8f0', padding: '12px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+            >
+              <span style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '11px', color: '#94a3b8' }}>
+                Aktifkan <em>Background graphics</em> saat cetak
               </span>
-              <div className="flex items-center gap-2">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <button
                   type="button"
                   onClick={() => setIsQrCardOpen(false)}
-                  className="px-4 py-2 rounded-lg border border-slate-300 text-xs font-semibold text-slate-600 hover:bg-slate-50"
+                  style={{ padding: '6px 14px', background: 'transparent', border: '1px solid #e2e8f0', borderRadius: '8px', fontFamily: 'Plus Jakarta Sans, sans-serif', fontWeight: 600, fontSize: '12px', color: '#475569', cursor: 'pointer' }}
                 >
                   Tutup
                 </button>
                 <button
                   type="button"
                   onClick={handlePrintCard}
-                  className="inline-flex items-center gap-1.5 px-5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-xs"
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 14px', background: '#065f46', border: 'none', borderRadius: '8px', fontFamily: 'Plus Jakarta Sans, sans-serif', fontWeight: 700, fontSize: '12px', color: '#fff', cursor: 'pointer' }}
+                  onMouseEnter={e => { e.currentTarget.style.background = '#047857' }}
+                  onMouseLeave={e => { e.currentTarget.style.background = '#065f46' }}
                 >
-                  <span className="material-symbols-outlined text-[16px]">print</span>
-                  <span>Cetak Kartu Fisik</span>
+                  <span className="material-symbols-outlined" style={{ fontSize: '15px' }}>print</span>
+                  <span>Cetak Kartu</span>
                 </button>
               </div>
             </div>

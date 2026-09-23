@@ -1,6 +1,136 @@
-import { useState, useId } from 'react'
+﻿import { useState, useMemo } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
 import schoolLogo from '../assets/logo.png'
+
+const LATTICE_BG = [
+  'repeating-linear-gradient(60deg, transparent 0px, transparent 9px, rgba(255,255,255,0.05) 9px, rgba(255,255,255,0.05) 10px)',
+  'repeating-linear-gradient(-60deg, transparent 0px, transparent 9px, rgba(255,255,255,0.05) 9px, rgba(255,255,255,0.05) 10px)',
+  'linear-gradient(135deg, #064e3b 0%, #065f46 55%, #047857 100%)',
+].join(', ')
+
+const MODAL_HEADER_BG = [
+  'repeating-linear-gradient(45deg, transparent 0px, transparent 18px, rgba(255,255,255,0.025) 18px, rgba(255,255,255,0.025) 19px)',
+  'repeating-linear-gradient(-45deg, transparent 0px, transparent 18px, rgba(255,255,255,0.025) 18px, rgba(255,255,255,0.025) 19px)',
+  'linear-gradient(135deg, #022c22 0%, #064e3b 60%, #065f46 100%)',
+].join(', ')
+
+export function StudentQrCard({ student, rombelName }) {
+  return (
+    <div
+      className="print-card-item bg-white relative flex flex-col overflow-hidden"
+      style={{
+        width: '8.5cm',
+        height: '5.3cm',
+        boxSizing: 'border-box',
+        borderRadius: '12px',
+        border: '1px solid #cbd5e1',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
+        flexShrink: 0,
+      }}
+    >
+      <div
+        style={{
+          borderTopLeftRadius: '11px',
+          borderTopRightRadius: '11px',
+          backgroundImage: LATTICE_BG,
+          padding: '5px 10px 5px 8px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '7px',
+        }}
+      >
+        <img
+          src={schoolLogo}
+          alt="Logo MI"
+          style={{ width: '22px', height: '22px', objectFit: 'contain', flexShrink: 0, filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.3))' }}
+        />
+        <div style={{ flex: 1, lineHeight: 1.2 }}>
+          <div style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontWeight: 700, fontSize: '8px', textTransform: 'uppercase', letterSpacing: '0.02em', color: '#fff' }}>
+            MI Roudotutta'lim Batujajar
+          </div>
+          <div style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontWeight: 500, fontSize: '6.5px', color: 'rgba(167,243,208,0.9)', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+            Kartu Tanda Pelajar &amp; Anggota Perpustakaan
+          </div>
+        </div>
+      </div>
+
+      <div style={{ flex: 1, display: 'flex', padding: '6px 8px 5px', gap: '7px', alignItems: 'stretch' }}>
+        <div style={{
+          width: '42px',
+          height: '52px',
+          minWidth: '42px',
+          alignSelf: 'flex-start',
+          border: '1.5px dashed #94a3b8',
+          borderRadius: '5px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: '#f8fafc',
+          gap: '2px',
+        }}>
+          <span className="material-symbols-outlined" style={{ fontSize: '18px', color: '#94a3b8' }}>person</span>
+          <span style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '5px', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.04em' }}>2x3cm</span>
+        </div>
+
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '3px', overflow: 'hidden' }}>
+          <div>
+            <div style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '5.5px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '1px' }}>
+              Nama Siswa
+            </div>
+            <div style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '9px', fontWeight: 800, color: '#0f172a', lineHeight: 1.15, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%' }}>
+              {student?.nama || 'N/A'}
+            </div>
+          </div>
+          <div style={{ height: '1px', background: '#e2e8f0' }} />
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <div>
+              <div style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '5.5px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.06em' }}>NIS</div>
+              <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: '8px', fontWeight: 700, color: '#065f46', letterSpacing: '0.03em' }}>
+                {student?.nis || 'N/A'}
+              </div>
+            </div>
+            <div>
+              <div style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '5.5px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Kelas</div>
+              <div style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '8px', fontWeight: 700, color: '#0f172a' }}>
+                {rombelName || 'N/A'}
+              </div>
+            </div>
+          </div>
+          <div>
+            <div style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '5.5px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.06em' }}>NISN</div>
+            <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: '7px', color: '#475569' }}>
+              {student?.nisn || 'N/A'}
+            </div>
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '3px', flexShrink: 0 }}>
+          <div style={{ padding: '4px', background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <QRCodeSVG
+              value={`SISWA-${student?.nis || 'UNKNOWN'}`}
+              size={52}
+              level="M"
+              style={{ display: 'block' }}
+            />
+          </div>
+          <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: '5.5px', color: '#64748b', fontWeight: 600, letterSpacing: '0.03em' }}>
+            {student?.nis}
+          </div>
+        </div>
+      </div>
+
+      <div style={{ background: '#ffffff', borderTop: '1px solid #e2e8f0', padding: '2.5px 10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <span style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '5.5px', color: '#065f46', letterSpacing: '0.03em' }}>
+          Berlaku selama menjadi Siswa aktif
+        </span>
+        <span style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '5.5px', fontWeight: 700, color: '#065f46', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+          SIPERPUS CARD
+        </span>
+      </div>
+    </div>
+  )
+}
 
 export default function BatchQrCardsModal({
   isOpen,
@@ -13,251 +143,195 @@ export default function BatchQrCardsModal({
 }) {
   const [searchFilter, setSearchFilter] = useState('')
 
+  const filteredStudents = useMemo(() => {
+    if (!students || !Array.isArray(students)) return []
+    if (!searchFilter) return students
+    const q = searchFilter.toLowerCase()
+    return students.filter(
+      (s) =>
+        (s.nama && s.nama.toLowerCase().includes(q)) ||
+        (s.nis && s.nis.toLowerCase().includes(q)) ||
+        (s.nisn && s.nisn.toLowerCase().includes(q))
+    )
+  }, [students, searchFilter])
+
+  const CARDS_PER_PAGE = 8
+  const studentPages = useMemo(() => {
+    const pages = []
+    for (let i = 0; i < filteredStudents.length; i += CARDS_PER_PAGE) {
+      pages.push(filteredStudents.slice(i, i + CARDS_PER_PAGE))
+    }
+    return pages
+  }, [filteredStudents])
+
+  const pageCount = studentPages.length
+  const handlePrint = () => { window.print() }
+
   if (!isOpen) return null
 
-  const filteredStudents = students.filter((s) => {
-    if (!searchFilter) return true
-    const q = searchFilter.toLowerCase()
-    return (
-      (s.nama && s.nama.toLowerCase().includes(q)) ||
-      (s.nis && s.nis.toLowerCase().includes(q)) ||
-      (s.nisn && s.nisn.toLowerCase().includes(q))
-    )
-  })
-
-  const handlePrint = () => {
-    window.print()
-  }
-
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 animate-fade-in">
-      <div className="bg-slate-100 rounded-2xl border border-slate-200 shadow-2xl max-w-5xl w-full max-h-[92vh] flex flex-col overflow-hidden">
-        {/* Modal Header */}
-        <div className="p-4 sm:p-5 bg-white border-b border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-4 no-print shrink-0">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-emerald-600 text-[24px]">
-                qr_code_2
-              </span>
-              <h3 className="font-bold text-lg text-slate-900">
-                Cetak Kartu QR Massal per Kelas
-              </h3>
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 overflow-y-auto animate-fade-in"
+      style={{ background: 'rgba(2,6,23,0.82)', backdropFilter: 'blur(4px)' }}
+    >
+      <div
+        className="relative w-full max-w-5xl rounded-2xl shadow-2xl max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-3rem)] flex flex-col overflow-hidden my-auto animate-modal-pop"
+        style={{ background: '#f1f5f9', border: '1px solid #e2e8f0' }}
+      >
+        {/* COMMAND PANEL HEADER */}
+        <div className="no-print shrink-0" style={{ backgroundImage: MODAL_HEADER_BG, padding: '20px 24px 16px' }}>
+          <div className="flex items-start justify-between gap-4 mb-4">
+            <div className="flex items-center gap-3">
+              <div style={{ background: 'rgba(255,255,255,0.1)', borderRadius: '10px', padding: '8px', border: '1px solid rgba(255,255,255,0.15)' }}>
+                <span className="material-symbols-outlined" style={{ fontSize: '22px', color: 'rgba(167,243,208,1)' }}>qr_code_2</span>
+              </div>
+              <div>
+                <h3 style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontWeight: 700, fontSize: '16px', color: '#fff', lineHeight: 1.2 }}>
+                  Cetak Kartu QR Massal
+                </h3>
+                <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '12px', color: 'rgba(167,243,208,0.75)', marginTop: '2px' }}>
+                  Format lembar A4 · 8.5cm x 5.3cm per kartu · 8 kartu/lembar
+                </p>
+              </div>
             </div>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Cetak seluruh kartu pelajar santri ber-QR Code sekaligus dalam format lembar A4 (dimensi kartu terkunci 8.5cm x 5.3cm).
-            </p>
+            <button
+              onClick={onClose}
+              className="no-print"
+              style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', padding: '6px', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', display: 'flex', alignItems: 'center', transition: 'all 0.15s' }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.15)'; e.currentTarget.style.color = '#fff' }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; e.currentTarget.style.color = 'rgba(255,255,255,0.6)' }}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>close</span>
+            </button>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5">
-            {/* Class Selector Dropdown */}
-            <div className="flex items-center gap-1.5">
-              <span className="text-xs font-semibold text-slate-600">Pilih Kelas:</span>
+          {/* Stats */}
+          <div className="flex flex-wrap items-center gap-2 mb-4">
+            {[
+              { icon: 'school', label: `Kelas ${selectedClass}`, accent: true },
+              { icon: 'badge', label: `${filteredStudents.length} Siswa` },
+              { icon: 'description', label: `${pageCount} Lembar A4` },
+            ].map(({ icon, label, accent }) => (
+              <div key={label} style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', background: accent ? 'rgba(167,243,208,0.15)' : 'rgba(255,255,255,0.08)', border: `1px solid ${accent ? 'rgba(167,243,208,0.35)' : 'rgba(255,255,255,0.12)'}`, borderRadius: '8px', padding: '4px 10px 4px 8px' }}>
+                <span className="material-symbols-outlined" style={{ fontSize: '14px', color: accent ? 'rgba(167,243,208,1)' : 'rgba(255,255,255,0.6)' }}>{icon}</span>
+                <span style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontWeight: 600, fontSize: '12px', color: accent ? 'rgba(167,243,208,1)' : 'rgba(255,255,255,0.85)' }}>{label}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Controls */}
+          <div className="flex flex-wrap items-center gap-2">
+            <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
+              <span className="material-symbols-outlined" style={{ position: 'absolute', left: '9px', fontSize: '14px', color: 'rgba(167,243,208,0.7)', pointerEvents: 'none' }}>class</span>
               <select
                 value={selectedClass}
                 onChange={(e) => onChangeClass(e.target.value)}
-                className="px-3 py-1.5 rounded-lg border border-slate-300 bg-white text-slate-800 text-xs font-semibold focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
+                style={{ paddingLeft: '28px', paddingRight: '28px', paddingTop: '7px', paddingBottom: '7px', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '8px', color: '#fff', fontSize: '12px', fontFamily: 'Plus Jakarta Sans, sans-serif', fontWeight: 600, cursor: 'pointer', outline: 'none', appearance: 'none' }}
               >
                 {classList.map((cls) => (
-                  <option key={cls} value={cls}>
-                    Kelas {cls}
-                  </option>
+                  <option key={cls} value={cls} style={{ background: '#064e3b', color: '#fff' }}>Kelas {cls}</option>
                 ))}
               </select>
+              <span className="material-symbols-outlined" style={{ position: 'absolute', right: '8px', fontSize: '14px', color: 'rgba(167,243,208,0.7)', pointerEvents: 'none' }}>expand_more</span>
             </div>
 
-            {/* Print Button */}
-            <button
-              type="button"
-              disabled={loading || students.length === 0}
-              onClick={handlePrint}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-xs transition-all active:scale-[0.98] disabled:opacity-50 cursor-pointer"
-            >
-              <span className="material-symbols-outlined text-[18px]">print</span>
-              <span>Cetak {filteredStudents.length} Kartu (A4)</span>
-            </button>
-
-            {/* Close Button */}
-            <button
-              type="button"
-              onClick={onClose}
-              className="p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
-              title="Tutup"
-            >
-              ✕
-            </button>
-          </div>
-        </div>
-
-        {/* Toolbar & Print Notice Banner */}
-        <div className="px-4 py-3 bg-emerald-50 border-b border-emerald-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs no-print shrink-0">
-          <div className="flex items-center gap-2 text-emerald-900 font-medium">
-            <span className="material-symbols-outlined text-emerald-600 text-[18px]">
-              info
-            </span>
-            <span>
-              Siap cetak <strong>{filteredStudents.length} kartu</strong> untuk <strong>Kelas {selectedClass}</strong>. Pastikan opsi <em>Background graphics / Cetak gambar latar</em> dicentang pada dialog cetak.
-            </span>
-          </div>
-
-          {/* Quick search input */}
-          <div className="relative w-full sm:w-56">
-            <span className="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[16px]">
-              search
-            </span>
-            <input
-              type="text"
-              value={searchFilter}
-              onChange={(e) => setSearchFilter(e.target.value)}
-              placeholder="Cari nama / NIS..."
-              className="w-full pl-8 pr-3 py-1 text-xs rounded-lg border border-slate-300 bg-white focus:ring-1 focus:ring-emerald-500 outline-none"
-            />
-          </div>
-        </div>
-
-        {/* Scrollable Preview & Print Area */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 print:p-0 print:overflow-visible">
-          {loading ? (
-            <div className="py-20 text-center text-slate-500 text-xs flex flex-col items-center justify-center gap-2 no-print">
-              <span className="material-symbols-outlined text-[32px] animate-spin text-emerald-600">
-                sync
-              </span>
-              <span>Memuat data santri Kelas {selectedClass}...</span>
+            <div style={{ position: 'relative', flex: '1 1 180px', minWidth: '160px' }}>
+              <span className="material-symbols-outlined" style={{ position: 'absolute', left: '9px', top: '50%', transform: 'translateY(-50%)', fontSize: '15px', color: 'rgba(255,255,255,0.45)', pointerEvents: 'none' }}>search</span>
+              <input
+                type="text"
+                value={searchFilter}
+                onChange={(e) => setSearchFilter(e.target.value)}
+                placeholder="Cari nama / NIS..."
+                style={{ width: '100%', paddingLeft: '30px', paddingRight: '12px', paddingTop: '7px', paddingBottom: '7px', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', color: '#fff', fontSize: '12px', fontFamily: 'Plus Jakarta Sans, sans-serif', outline: 'none', boxSizing: 'border-box' }}
+                onFocus={e => { e.target.style.borderColor = 'rgba(167,243,208,0.5)'; e.target.style.background = 'rgba(255,255,255,0.12)' }}
+                onBlur={e => { e.target.style.borderColor = 'rgba(255,255,255,0.15)'; e.target.style.background = 'rgba(255,255,255,0.08)' }}
+              />
             </div>
-          ) : filteredStudents.length === 0 ? (
-            <div className="py-20 text-center text-slate-500 text-xs no-print">
-              Tidak ada data santri ditemukan untuk Kelas {selectedClass}.
-            </div>
-          ) : (
-            <div
-              id="printable-cards"
-              className="print-area grid grid-cols-1 md:grid-cols-2 gap-4 print:grid-cols-2 print:gap-4 print:m-0 justify-items-center"
-            >
-              {filteredStudents.map((st, idx) => {
-                const rombelName =
-                  st.siswa_kelas?.[0]?.kelas_detail?.kelas?.kelas || selectedClass
-                return (
-                  <div
-                    key={st.idsiswa || idx}
-                    className="print-card-item bg-white border border-slate-300 print:border-slate-400 rounded-xl shadow-xs print:shadow-none p-3 relative flex flex-col justify-between overflow-hidden"
-                    style={{
-                      width: '8.5cm',
-                      height: '5.3cm',
-                      boxSizing: 'border-box',
-                    }}
-                  >
-                    {/* Header Card */}
-                    <div className="flex items-center gap-2 border-b border-emerald-800/30 pb-1 bg-gradient-to-r from-emerald-900 via-emerald-800 to-emerald-950 text-white -m-3 mb-1.5 px-3 py-1">
-                      <img
-                        src={schoolLogo}
-                        alt="Logo MI"
-                        className="w-6 h-6 object-contain drop-shadow"
-                      />
-                      <div className="leading-tight">
-                        <h4 className="font-heading font-bold text-[8.5px] uppercase tracking-tight text-white">
-                          MI ROUDOTUTTA'LIM BATUJAJAR
-                        </h4>
-                        <p className="text-[7px] text-emerald-200 font-medium tracking-wide">
-                          KARTU TANDA PELAJAR &amp; ANGGOTA PERPUSTAKAAN
-                        </p>
-                      </div>
-                    </div>
 
-                    {/* Body: Photo box, Info, and QR Code */}
-                    <div className="flex items-center justify-between gap-2 my-auto">
-                      {/* Avatar / Photo Box */}
-                      <div className="w-14 h-18 bg-slate-50 border border-slate-300 rounded flex flex-col items-center justify-center text-slate-400 shrink-0">
-                        <span className="material-symbols-outlined text-[24px]">person</span>
-                        <span className="text-[6px] font-sans uppercase">2 x 3 cm</span>
-                      </div>
-
-                      {/* Student Details */}
-                      <div className="flex-1 text-[8px] space-y-0.5 leading-snug">
-                        <div>
-                          <span className="text-slate-500 block text-[6.5px] uppercase font-bold">
-                            Nama Santri:
-                          </span>
-                          <span className="font-bold text-slate-900 text-[9.5px] leading-tight block truncate">
-                            {st.nama}
-                          </span>
-                        </div>
-
-                        <div className="flex items-center gap-3">
-                          <div>
-                            <span className="text-slate-500 block text-[6.5px] uppercase font-bold">
-                              NIS:
-                            </span>
-                            <span className="font-mono font-bold text-emerald-800 text-[8.5px]">
-                              {st.nis}
-                            </span>
-                          </div>
-                          <div>
-                            <span className="text-slate-500 block text-[6.5px] uppercase font-bold">
-                              Kelas:
-                            </span>
-                            <span className="font-bold text-slate-800 text-[8.5px]">
-                              {rombelName}
-                            </span>
-                          </div>
-                        </div>
-
-                        <div>
-                          <span className="text-slate-500 block text-[6.5px] uppercase font-bold">
-                            NISN:
-                          </span>
-                          <span className="font-mono text-slate-700 text-[7.5px]">
-                            {st.nisn || '-'}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* QR Code SVG for Scanner */}
-                      <div className="flex flex-col items-center justify-center shrink-0 p-1 bg-white border border-slate-200 rounded">
-                        <QRCodeSVG
-                          value={`SISWA-${st.nis}`}
-                          size={54}
-                          level="M"
-                        />
-                        <span className="font-mono text-[6px] text-slate-600 mt-0.5 font-semibold">
-                          {st.nis}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Footer card line */}
-                    <div className="border-t border-slate-200 pt-0.5 flex items-center justify-between text-[6px] text-slate-500 -mb-1">
-                      <span>Berlaku selama menjadi santri aktif</span>
-                      <span className="font-bold text-emerald-800">SIPERPUS Card</span>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          )}
-        </div>
-
-        {/* Modal Footer */}
-        <div className="p-3 bg-white border-t border-slate-200 flex items-center justify-between text-xs text-slate-500 no-print shrink-0">
-          <span>
-            Total: <strong>{filteredStudents.length} santri</strong> siap cetak di Kelas {selectedClass}
-          </span>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-1.5 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 font-medium transition-colors"
-            >
-              Tutup
-            </button>
             <button
               type="button"
               disabled={loading || filteredStudents.length === 0}
               onClick={handlePrint}
-              className="px-4 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold flex items-center gap-1.5 transition-colors disabled:opacity-50"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '7px', padding: '7px 16px', background: (loading || filteredStudents.length === 0) ? 'rgba(167,243,208,0.2)' : 'rgba(167,243,208,1)', border: 'none', borderRadius: '8px', color: (loading || filteredStudents.length === 0) ? 'rgba(6,79,58,0.5)' : '#064e3b', fontFamily: 'Plus Jakarta Sans, sans-serif', fontWeight: 700, fontSize: '12px', cursor: (loading || filteredStudents.length === 0) ? 'not-allowed' : 'pointer', transition: 'all 0.15s', flexShrink: 0 }}
+              onMouseEnter={e => { if (!e.currentTarget.disabled) e.currentTarget.style.background = '#6ee7b7' }}
+              onMouseLeave={e => { if (!e.currentTarget.disabled) e.currentTarget.style.background = 'rgba(167,243,208,1)' }}
             >
-              <span className="material-symbols-outlined text-[16px]">print</span>
-              <span>Cetak Lembar A4</span>
+              <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>print</span>
+              <span>Cetak {filteredStudents.length} Kartu</span>
             </button>
           </div>
+        </div>
+
+        {/* CARD GALLERY */}
+        <div className="flex-1 overflow-y-auto" style={{ background: '#f1f5f9' }}>
+          {loading ? (
+            <div className="no-print flex flex-col items-center justify-center py-20 gap-3">
+              <div style={{ width: '40px', height: '40px', borderRadius: '50%', border: '3px solid #e2e8f0', borderTopColor: '#065f46', animation: 'spin 0.8s linear infinite' }} />
+              <span style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '13px', color: '#64748b' }}>
+                Memuat data Siswa Kelas {selectedClass}...
+              </span>
+            </div>
+          ) : filteredStudents.length === 0 ? (
+            <div className="no-print flex flex-col items-center justify-center py-20 gap-3">
+              <span className="material-symbols-outlined" style={{ fontSize: '40px', color: '#94a3b8' }}>person_search</span>
+              <span style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '13px', color: '#64748b' }}>
+                {searchFilter ? 'Tidak ada Siswa yang cocok dengan pencarian.' : `Tidak ada data Siswa untuk Kelas ${selectedClass}.`}
+              </span>
+              {searchFilter && (
+                <button
+                  onClick={() => setSearchFilter('')}
+                  style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '12px', color: '#065f46', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}
+                >
+                  Hapus filter
+                </button>
+              )}
+            </div>
+          ) : (
+            <div
+              id="printable-cards"
+              className="print-area p-4 sm:p-5"
+              style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '12px', justifyItems: 'center' }}
+            >
+              {studentPages.map((pageStudents, pageIdx) => (
+                <div key={pageIdx} className="print-sheet">
+                  <div className="print-sheet-grid" style={{ display: 'contents' }}>
+                    {pageStudents.map((st, idx) => {
+                      const rombelName = st.siswa_kelas?.[0]?.kelas_detail?.kelas?.kelas || selectedClass
+                      return (
+                        <div
+                          key={st.idsiswa || idx}
+                          style={{ transition: 'transform 0.15s, box-shadow 0.15s' }}
+                          onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(6,79,58,0.12)' }}
+                          onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '' }}
+                        >
+                          <StudentQrCard student={st} rombelName={rombelName} />
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* FOOTER BAR */}
+        <div className="no-print shrink-0" style={{ background: '#fff', borderTop: '1px solid #e2e8f0', padding: '12px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '12px', color: '#64748b' }}>
+            {filteredStudents.length > 0
+              ? <><strong style={{ color: '#0f172a' }}>{filteredStudents.length} Siswa</strong>{' '}&middot;{' '}{pageCount} lembar A4{' '}&middot; Aktifkan <em>Background graphics</em> di dialog cetak</>
+              : 'Pilih kelas untuk melihat preview kartu.'
+            }
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            style={{ padding: '6px 16px', background: 'transparent', border: '1px solid #e2e8f0', borderRadius: '8px', fontFamily: 'Plus Jakarta Sans, sans-serif', fontWeight: 600, fontSize: '12px', color: '#475569', cursor: 'pointer', transition: 'all 0.15s' }}
+            onMouseEnter={e => { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.borderColor = '#cbd5e1' }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = '#e2e8f0' }}
+          >
+            Tutup
+          </button>
         </div>
       </div>
     </div>

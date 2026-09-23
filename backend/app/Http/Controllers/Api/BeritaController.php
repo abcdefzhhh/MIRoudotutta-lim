@@ -12,9 +12,23 @@ class BeritaController extends Controller
     /**
      * Display a listing of news.
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $berita = Berita::latest('tgl_publish')->paginate(10);
+        $query = Berita::query();
+
+        if ($request->filled('kategori') && $request->kategori !== 'Semua') {
+            $query->where('kategori', $request->kategori);
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('judul', 'like', "%{$search}%")
+                  ->orWhere('isi_konten', 'like', "%{$search}%");
+            });
+        }
+
+        $berita = $query->latest('tgl_publish')->paginate($request->input('per_page', 10));
 
         return response()->json([
             'success' => true,
@@ -50,6 +64,7 @@ class BeritaController extends Controller
         $request->validate([
             'judul' => 'required|string|max:255',
             'isi_konten' => 'required|string',
+            'kategori' => 'nullable|string|in:Prestasi,Kegiatan,Pengumuman',
             'tgl_publish' => 'nullable|date',
             'foto' => 'nullable|file|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
             'gambar_thumbnail' => 'nullable',
@@ -67,6 +82,7 @@ class BeritaController extends Controller
             'judul' => $request->judul,
             'slug' => $slug,
             'isi_konten' => $request->isi_konten,
+            'kategori' => $request->kategori ?? 'Kegiatan',
             'tgl_publish' => $request->tgl_publish ?? now(),
         ];
 
@@ -112,6 +128,7 @@ class BeritaController extends Controller
         $request->validate([
             'judul' => 'sometimes|required|string|max:255',
             'isi_konten' => 'sometimes|required|string',
+            'kategori' => 'nullable|string|in:Prestasi,Kegiatan,Pengumuman',
             'tgl_publish' => 'nullable|date',
             'foto' => 'nullable|file|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
             'gambar_thumbnail' => 'nullable',
@@ -134,6 +151,10 @@ class BeritaController extends Controller
 
         if ($request->has('isi_konten')) {
             $data['isi_konten'] = $request->isi_konten;
+        }
+
+        if ($request->has('kategori')) {
+            $data['kategori'] = $request->kategori;
         }
 
         if ($request->has('tgl_publish')) {
