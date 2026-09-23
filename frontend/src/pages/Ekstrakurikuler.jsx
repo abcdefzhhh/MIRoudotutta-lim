@@ -1,10 +1,13 @@
 import { Link } from 'react-router-dom'
 import eskulBg from '../assets/eskul.jpg'
+import hadrahImg from '../assets/eskul-hadrah.jpg'
+import futsalImg from '../assets/eskul-futsal.jpg'
+import kaligrafiImg from '../assets/eskul-kaligrafi.jpg'
 import useScrollReveal, { useStaggerReveal } from '../hooks/useScrollReveal'
 
 export default function Ekstrakurikuler() {
   const introRef = useScrollReveal()
-  const gridRef = useStaggerReveal({ staggerMs: 80 })
+  const gridRef = useStaggerReveal({ staggerMs: 90 })
   const ctaRef = useScrollReveal()
 
   const activities = [
@@ -15,6 +18,8 @@ export default function Ekstrakurikuler() {
       desc: 'Melatih kemandirian, kedisiplinan, tali-temali, pertolongan pertama, kepedulian sosial, dan kecintaan pada alam dalam bingkai adab islami.',
       icon: 'explore',
       badgeColor: 'bg-emerald-deep text-white',
+      image: eskulBg,
+      alt: 'Kegiatan Pramuka Siswa MI Roudotutta\'lim',
     },
     {
       title: 'Tahfidz Club & Seni Tilawah',
@@ -23,6 +28,8 @@ export default function Ekstrakurikuler() {
       desc: 'Penguatan muraja\'ah juz amma, pendalaman makharijul huruf, dan pembelajaran nagham (irama tilawah tartil) untuk persiapan musabaqah/khotmil Qur\'an.',
       icon: 'menu_book',
       badgeColor: 'bg-gold text-ink font-semibold',
+      image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC11OoNNfMTQw4KSD1t0JIbMBmFD0yY_fYTGQSNdI2_OXOovTFAG4kVZtABk4-S_SJ0Sh03bCYnCAsj-02468km3QdO5pUlC0JZdejW7lDMuIAW6CKeHS4SGZIArSZGWTGXHJCfKwZkeVJTO-f3kK-xgPlNYyp8US4OqVunHJb9vmnwIFouc7U3x8wRbD4D2NfSYPbJ90MgeXaSjmj1AGTMtSm8zmRaB2COp6FITjdSatV-4KISBdwKuA',
+      alt: 'Santri menghafal Al-Qur\'an dan seni tilawah',
     },
     {
       title: 'Seni Rebana & Hadrah',
@@ -31,6 +38,8 @@ export default function Ekstrakurikuler() {
       desc: 'Mengenalkan kecintaan pada sholawat nabi melalui kesenian hadrah klasik, melatih kepekaan ritme, kekompakan tim, dan ekspresi seni islami.',
       icon: 'music_note',
       badgeColor: 'bg-emerald-leaf text-white',
+      image: hadrahImg,
+      alt: 'Siswa bermain hadrah rebana di madrasah',
     },
     {
       title: 'Futsal & Olahraga Kebugaran',
@@ -39,6 +48,8 @@ export default function Ekstrakurikuler() {
       desc: 'Menyalurkan energi positif, melatih ketahanan fisik, koordinasi motorik, sportivitas, serta kerjasama tim di lapangan olahraga madrasah.',
       icon: 'sports_soccer',
       badgeColor: 'bg-emerald-leaf-soft text-white',
+      image: futsalImg,
+      alt: 'Anak-anak bermain futsal di lapangan sekolah',
     },
     {
       title: 'Arabic & English Fun Club',
@@ -47,6 +58,8 @@ export default function Ekstrakurikuler() {
       desc: 'Membangun keberanian Siswa berbicara bahasa Arab dan Inggris melalui permainan interaktif, nyanyian edukatif, kosa kata harian, dan storytelling.',
       icon: 'translate',
       badgeColor: 'bg-emerald-deep text-white',
+      image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCP5bV2Z483NJLeR1f-8BzMeD-GnCxwJ-qAaJsljLEeUp2zNMpVlzH-weyFUA5Hs3xFHkIBl-LxSZU45FW3Sp0S5C2zgwHPcG1jS7oY5MkImZIj_nYRzyohWiYjz72irVVpTDcGcu0o45Wjrf5Mwd5ARLgZwMSuB5YATXDQttaft8Z96_G3fGix78rFy86gSSsTDS_VS42X-uGI07Xa7n3WkvgCiOqB0qAjYRgc0fUFlvd2KxcBdr6rmw',
+      alt: 'Pembelajaran bahasa Arab dan Inggris interaktif',
     },
     {
       title: 'Seni Kaligrafi Islam (Khat)',
@@ -55,6 +68,8 @@ export default function Ekstrakurikuler() {
       desc: 'Melatih ketelitian, ketenangan, dan kesabaran Siswa dalam menggoreskan pena kaligrafi gaya Naskhi dan Tsuluts untuk menulis ayat-ayat suci.',
       icon: 'draw',
       badgeColor: 'bg-gold text-ink font-semibold',
+      image: kaligrafiImg,
+      alt: 'Siswa menulis kaligrafi Arab dengan pena bambu',
     },
     {
       title: 'Sains Cilik & Eksperimen Alam',
@@ -63,12 +78,14 @@ export default function Ekstrakurikuler() {
       desc: 'Eksperimen ilmiah sederhana yang memantik rasa ingin tahu Siswa tentang hukum alam, daur ulang ramah lingkungan, dan logika sains dasar.',
       icon: 'biotech',
       badgeColor: 'bg-emerald-leaf text-white',
+      image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA5zfyUe4aeo7HYLh_CS6TobN1j36Rca2USFuwtFIP8aA8rN6y-MWiSm6e8pIEsDs9C2uICpEF1_qpD5bodTVhwl4tjLCKaGKPGOKXn4hAIIwQjDrQvXBsW23xcMyVJhg7lEr09kj13ZGXUhnht5WRR8LGYHVnCrpgQO0haOTDDWtvmcy5PXkAoS4kKawNGlOpuNssiYGewGO9PBVA3pXS698v_AeXirbw0pqU5gxbZtRR73QnnCt5NeA',
+      alt: 'Eksperimen sains sederhana siswa madrasah',
     },
   ]
 
   return (
     <div className="w-full bg-ivory pt-24 pb-20">
-      {/* Header Banner with eskul.jpeg Background (Hanya di Judul) */}
+      {/* Header Banner with eskul Background */}
       <section className="relative text-white py-18 sm:py-24 lg:py-28 overflow-hidden bg-emerald-deep shadow-md">
         {/* Full-bleed Photo Background Container */}
         <div className="absolute inset-0 z-0">
@@ -114,8 +131,8 @@ export default function Ekstrakurikuler() {
           </div>
           <div className="flex items-center gap-6 shrink-0 border-t md:border-t-0 md:border-l border-border pt-4 md:pt-0 md:pl-6 text-xs text-ink-soft">
             <div>
-              <span className="block font-heading font-bold text-xl text-emerald-deep">7+</span>
-              Pilihan Ekskul
+              <span className="block font-heading font-bold text-xl text-emerald-deep">7 Pilihan</span>
+              Ekskul Aktif
             </div>
             <div>
               <span className="block font-heading font-bold text-xl text-emerald-deep">100%</span>
@@ -140,37 +157,61 @@ export default function Ekstrakurikuler() {
             {activities.map((act, index) => (
               <div
                 key={index}
-                className="reveal-child bg-white rounded-2xl border border-border p-6 flex flex-col justify-between hover:shadow-xl hover:border-emerald-leaf/40 transform hover:-translate-y-1.5 transition-all duration-300 group"
+                className="reveal-child bg-white rounded-2xl border border-border/80 overflow-hidden flex flex-col justify-between hover:shadow-xl hover:border-emerald-leaf/40 transform hover:-translate-y-1.5 transition-all duration-300 group"
               >
                 <div>
-                  <div className="flex items-start justify-between gap-2 mb-4">
-                    <div className="w-12 h-12 rounded-xl bg-emerald-deep/10 text-emerald-deep flex items-center justify-center group-hover:bg-emerald-deep group-hover:text-white transition-colors shrink-0">
-                      <span className="material-symbols-outlined text-[26px]">{act.icon}</span>
+                  {/* Photo Cover with Category Badge & Schedule */}
+                  <div className="relative w-full aspect-[16/10] overflow-hidden bg-slate-100">
+                    <img
+                      src={act.image}
+                      alt={act.alt || act.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent opacity-70 group-hover:opacity-50 transition-opacity" />
+
+                    {/* Floating Category Badge */}
+                    <div className="absolute top-3 left-3">
+                      <span className={`px-2.5 py-1 rounded-md text-[11px] font-semibold tracking-wide shadow-xs ${act.badgeColor}`}>
+                        {act.category}
+                      </span>
                     </div>
-                    <span className={`px-2.5 py-1 rounded-lg text-xs font-medium ${act.badgeColor}`}>
-                      {act.category}
-                    </span>
+
+                    {/* Floating Schedule Pill */}
+                    <div className="absolute bottom-3 left-3 flex items-center gap-1.5 text-white text-[11px] font-medium bg-black/60 backdrop-blur-xs px-2.5 py-1 rounded-md">
+                      <span className="material-symbols-outlined text-[14px] text-gold">schedule</span>
+                      <span>{act.schedule}</span>
+                    </div>
                   </div>
 
-                  <h3 className="font-heading font-bold text-lg text-ink mb-1 group-hover:text-emerald-deep transition-colors">
-                    {act.title}
-                  </h3>
+                  {/* Body Content */}
+                  <div className="p-5 sm:p-6">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-8 h-8 rounded-lg bg-emerald-deep/10 text-emerald-deep flex items-center justify-center shrink-0 group-hover:bg-emerald-deep group-hover:text-white transition-colors">
+                        <span className="material-symbols-outlined text-[20px]">{act.icon}</span>
+                      </div>
+                      <h3 className="font-heading font-bold text-lg text-ink group-hover:text-emerald-deep transition-colors leading-tight">
+                        {act.title}
+                      </h3>
+                    </div>
 
-                  <p className="inline-flex items-center gap-1.5 text-xs text-emerald-leaf font-semibold mb-3">
-                    <span className="material-symbols-outlined text-[15px]">schedule</span>
-                    {act.schedule}
-                  </p>
-
-                  <p className="font-body text-sm text-ink-soft leading-relaxed">
-                    {act.desc}
-                  </p>
+                    <p className="font-body text-sm text-ink-soft leading-relaxed mt-2.5">
+                      {act.desc}
+                    </p>
+                  </div>
                 </div>
 
-                <div className="mt-6 pt-4 border-t border-border/60 flex items-center justify-between text-xs text-ink-soft">
-                  <span className="text-emerald-deep font-semibold">Tingkat Kelas 1 - 6</span>
-                  <span className="material-symbols-outlined text-[18px] text-border group-hover:text-emerald-leaf transition-colors">
-                    arrow_forward
-                  </span>
+                {/* Card Footer */}
+                <div className="px-5 sm:px-6 pb-5 pt-0">
+                  <div className="pt-3.5 border-t border-border/60 flex items-center justify-between text-xs text-ink-soft">
+                    <span className="inline-flex items-center gap-1.5 text-emerald-deep font-semibold">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-leaf" />
+                      Tingkat Kelas 1 - 6
+                    </span>
+                    <span className="material-symbols-outlined text-[18px] text-border group-hover:text-emerald-leaf group-hover:translate-x-1 transition-all">
+                      arrow_forward
+                    </span>
+                  </div>
                 </div>
               </div>
             ))}
