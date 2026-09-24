@@ -128,7 +128,7 @@ class LoginActivity : AppCompatActivity() {
 
         AlertDialog.Builder(this)
             .setTitle("Konfigurasi IP Server Backend")
-            .setMessage("Gunakan http://10.0.2.2:8000/api/ untuk Emulator, atau IP Wi-Fi komputer Anda (contoh: http://192.168.1.10:8000/api/):")
+            .setMessage("Gunakan http://127.0.0.1:8000/api/ untuk USB (adb reverse - Rekomendasi), http://10.0.2.2:8000/api/ untuk Emulator, atau IP Wi-Fi:")
             .setView(input)
             .setPositiveButton("Simpan") { _, _ ->
                 val newUrl = input.text.toString().trim()

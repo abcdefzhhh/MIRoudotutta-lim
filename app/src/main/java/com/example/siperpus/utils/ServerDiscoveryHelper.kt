@@ -33,15 +33,15 @@ object ServerDiscoveryHelper {
         // 1. Current URL
         candidates.add(sessionManager.baseUrl)
 
-        // 2. Active laptop Wi-Fi IP
-        candidates.add("http://192.168.100.128:8000/api/")
-        candidates.add("http://192.168.11.62:8000/api/")
-
-        // 3. USB Cable / ADB Reverse
+        // 2. USB Cable / ADB Reverse (127.0.0.1) - Solusi permanen tanpa ganti IP
         candidates.add("http://127.0.0.1:8000/api/")
 
-        // 4. Android Studio Emulator
+        // 3. Android Studio Emulator (10.0.2.2)
         candidates.add("http://10.0.2.2:8000/api/")
+
+        // 4. Fallback IP Wi-Fi sebelumnya jika ada
+        candidates.add("http://192.168.100.128:8000/api/")
+        candidates.add("http://192.168.11.62:8000/api/")
 
         // 5. Cek Gateway Wi-Fi aktif dari perangkat Android
         try {

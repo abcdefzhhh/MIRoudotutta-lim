@@ -17,8 +17,8 @@ class SessionManager(context: Context) {
         private const val KEY_USER = "key_user"
         private const val KEY_BASE_URL = "key_base_url"
 
-        // Default URL: IP Wi-Fi laptop aktif untuk koneksi langsung perangkat HP fisik
-        const val DEFAULT_BASE_URL = "http://192.168.100.128:8000/api/"
+        // Default URL: Port forwarding USB (ADB Reverse) - tidak pernah ganti IP walau pindah Wi-Fi
+        const val DEFAULT_BASE_URL = "http://127.0.0.1:8000/api/"
     }
 
     var token: String?
@@ -28,8 +28,8 @@ class SessionManager(context: Context) {
     var baseUrl: String
         get() {
             var url = prefs.getString(KEY_BASE_URL, DEFAULT_BASE_URL) ?: DEFAULT_BASE_URL
-            // Migrasi otomatis jika sebelumnya tersimpan IP lama atau emulator di HP fisik
-            if (url.contains("10.0.2.2") || url.contains("192.168.11.62")) {
+            // Migrasi otomatis jika sebelumnya tersimpan IP Wi-Fi statis lama yang sering berubah
+            if (url.contains("192.168.100.128") || url.contains("192.168.11.62")) {
                 url = DEFAULT_BASE_URL
                 prefs.edit().putString(KEY_BASE_URL, DEFAULT_BASE_URL).apply()
             }
