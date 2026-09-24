@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary Emerald Theme -->
+    <color name="primary">#166534</color>
+    <color name="primary_dark">#0B4A2E</color>
+    <color name="primary_light">#15803D</color>
+    <color name="primary_container">#DCFCE7</color>
+    <color name="on_primary">#FFFFFF</color>
+    <color name="on_primary_container">#14532D</color>
+
+    <!-- Secondary / Accent Warm Gold -->
+    <color name="secondary">#CA8A04</color>
+    <color name="secondary_dark">#854D0E</color>
+    <color name="secondary_container">#FEF08A</color>
+    <color name="on_secondary">#FFFFFF</color>
+    <color name="on_secondary_container">#713F12</color>
+
+    <!-- Surfaces & Backgrounds -->
+    <color name="background">#F8FAFC</color>
+    <color name="surface">#F8FAFC</color>
+    <color name="surface_white">#FFFFFF</color>
+    <color name="surface_container">#F1F5F9</color>
+    <color name="surface_container_high">#E2E8F0</color>
+    <color name="on_surface">#0F172A</color>
+    <color name="on_surface_variant">#475569</color>
+    <color name="outline">#CBD5E1</color>
+    <color name="outline_variant">#E2E8F0</color>
+
+    <!-- Status Colors -->
+    <color name="error">#B91C1C</color>
+    <color name="error_container">#FEE2E2</color>
+    <color name="on_error">#FFFFFF</color>
+    <color name="on_error_container">#991B1B</color>
+    <color name="success">#16A34A</color>
+    <color name="success_container">#DCFCE7</color>
+    <color name="warning">#D97706</color>
+    <color name="warning_container">#FEF3C7</color>
+
+    <!-- Barcode Laser line -->
+    <color name="scanner_laser">#22C55E</color>
+    <color name="scanner_overlay">#80000000</color>
+
+    <!-- Gradients -->
+    <color name="primary_gradient_start">#064E3B</color>
+    <color name="primary_gradient_end">#047857</color>
+    <color name="gold_gradient_start">#B45309</color>
+    <color name="gold_gradient_end">#F59E0B</color>
+
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+</resources>
