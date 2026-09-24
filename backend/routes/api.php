@@ -141,4 +141,10 @@ Route::prefix('siperpus')->group(function () {
     Route::get('/riwayat', [SiperpusApiController::class, 'getRiwayat']);
     Route::post('/kunjungan', [SiperpusApiController::class, 'recordKunjungan']);
     Route::get('/kunjungan/hari-ini', [SiperpusApiController::class, 'getKunjunganHariIni']);
+
+    // Peminjaman & Pengembalian Kolektif Kelas (Paket Jam Pelajaran)
+    Route::get('/buku/kolektif', [SiperpusApiController::class, 'getBukuKolektif']);
+    Route::get('/pinjam/kolektif/aktif', [SiperpusApiController::class, 'getPinjamKolektifAktif']);
+    Route::post('/pinjam/kolektif', [SiperpusApiController::class, 'submitPeminjamanKolektif']);
+    Route::post('/kembali/kolektif/{idpinjam?}', [SiperpusApiController::class, 'submitPengembalianKolektif']);
 });

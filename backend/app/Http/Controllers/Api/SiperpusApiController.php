@@ -78,13 +78,19 @@ class SiperpusApiController extends Controller
         $rawKode = trim($kode);
         $cleanKode = preg_replace('/^buku-([0-9xX-]+-)?/i', '', $rawKode);
 
-        return BukuDetail::with('buku')
+        $query = BukuDetail::with('buku')
             ->where('kodebukudetail', $rawKode)
             ->orWhere('idbukudetail', $rawKode)
             ->orWhere('kodebukudetail', $cleanKode)
-            ->orWhere('idbukudetail', $cleanKode)
-            ->orWhereRaw('? LIKE CONCAT("%", kodebukudetail)', [$rawKode])
-            ->first();
+            ->orWhere('idbukudetail', $cleanKode);
+
+        if (DB::getDriverName() === 'sqlite') {
+            $query->orWhereRaw('? LIKE ("%" || kodebukudetail)', [$rawKode]);
+        } else {
+            $query->orWhereRaw('? LIKE CONCAT("%", kodebukudetail)', [$rawKode]);
+        }
+
+        return $query->first();
     }
 
     public function scanBuku(string $kode): JsonResponse
@@ -307,6 +313,8 @@ class SiperpusApiController extends Controller
 
         $tarifDenda = 1000;
         $totalDenda = $hariTerlambat * $tarifDenda;
+        $totalBukuPinjaman = PinjamDetail::where('idpinjam', $pinjam->idpinjam)->count();
+        $isKolektif = $totalBukuPinjaman > 3;
 
         return response()->json([
             'success' => true,
@@ -330,6 +338,8 @@ class SiperpusApiController extends Controller
                 'tarif_denda_per_hari' => $tarifDenda,
                 'total_denda' => $totalDenda,
                 'id_peminjaman' => $pinjam->idpinjam,
+                'total_buku_pinjaman' => $totalBukuPinjaman,
+                'is_kolektif' => $isKolektif,
             ],
         ]);
     }
@@ -621,4 +631,370 @@ class SiperpusApiController extends Controller
         ]);
     }
 
+    /**
+     * Ambil katalog buku yang tersedia untuk peminjaman kelas/kolektif.
+     */
+    public function getBukuKolektif(Request $request): JsonResponse
+    {
+        $query = Buku::query();
+
+        if ($request->filled('search')) {
+            $s = trim($request->search);
+            $query->where(function ($q) use ($s) {
+                $q->where('judul', 'like', "%{$s}%")
+                  ->orWhere('kodebuku', 'like', "%{$s}%")
+                  ->orWhere('isbn', 'like', "%{$s}%")
+                  ->orWhere('penulis', 'like', "%{$s}%")
+                  ->orWhere('penerbit', 'like', "%{$s}%");
+            });
+        }
+
+        // Default: hanya tampilkan yang stok fisik tersedia > 0
+        if ($request->boolean('tersedia_saja', true)) {
+            $query->where('stok_tersedia', '>', 0);
+        }
+
+        $perPage = min((int) $request->input('per_page', 20), 100);
+        $bukuList = $query->orderBy('judul', 'asc')->paginate($perPage);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Katalog buku untuk peminjaman kelas berhasil dimuat.',
+            'data' => $bukuList,
+        ]);
+    }
+
+    /**
+     * Ambil daftar transaksi peminjaman kolektif kelas yang masih aktif.
+     */
+    public function getPinjamKolektifAktif(Request $request): JsonResponse
+    {
+        $minItems = (int) $request->input('min_items', 4);
+
+        $query = Pinjam::with([
+            'siswa.siswaKelas.kelasDetail.kelas',
+            'pinjamDetails.bukuDetail.buku',
+        ])
+        ->where('status', 'dipinjam');
+
+        if ($request->boolean('semua')) {
+            // Tampilkan semua pinjaman aktif
+        } else {
+            // Pinjaman kolektif (memiliki jumlah eksemplar >= minItems atau batas kembali hari ini)
+            $today = Carbon::today()->toDateString();
+            $query->where(function ($q) use ($minItems, $today) {
+                $q->has('pinjamDetails', '>=', $minItems)
+                  ->orWhereDate('tgl_batas_kembali', '<=', $today);
+            });
+        }
+
+        $list = $query->latest('idpinjam')->get()->map(function ($pinjam) {
+            $siswa = $pinjam->siswa;
+            $kelasNama = $siswa?->siswaKelas->first()?->kelasDetail?->kelas?->kelas ?? 'Umum';
+            $details = $pinjam->pinjamDetails;
+            $totalBuku = $details->count();
+            $firstBuku = $details->first()?->bukuDetail?->buku;
+
+            return [
+                'idpinjam' => $pinjam->idpinjam,
+                'id_transaksi' => 'TRX-KOL-' . str_pad($pinjam->idpinjam, 5, '0', STR_PAD_LEFT),
+                'penanggung_jawab' => [
+                    'idsiswa' => $siswa?->idsiswa,
+                    'nis' => $siswa?->nis ?? '-',
+                    'nama' => $siswa?->nama ?? 'Siswa',
+                    'kelas' => $kelasNama,
+                ],
+                'buku' => [
+                    'idbuku' => $firstBuku?->idbuku,
+                    'judul' => $firstBuku?->judul ?? 'Buku Paket Pelajaran',
+                    'penerbit' => $firstBuku?->penerbit ?? '-',
+                    'kodebuku' => $firstBuku?->kodebuku ?? '-',
+                ],
+                'jumlah_buku' => $totalBuku,
+                'waktu_pinjam' => Carbon::parse($pinjam->waktu)->format('d M Y, H:i'),
+                'tgl_batas_kembali' => Carbon::parse($pinjam->tgl_batas_kembali)->format('d M Y'),
+                'status' => $pinjam->status,
+                'sampel_kode' => $details->take(3)->pluck('bukuDetail.kodebukudetail')->filter()->values(),
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Daftar peminjaman kelas aktif berhasil dimuat.',
+            'data' => [
+                'total_peminjaman_aktif' => $list->count(),
+                'list' => $list,
+            ],
+        ]);
+    }
+
+    /**
+     * Submit peminjaman kolektif sekelas untuk jam pelajaran.
+     */
+    public function submitPeminjamanKolektif(Request $request): JsonResponse
+    {
+        $request->validate([
+            'nis' => 'required|string',
+            'jumlah' => 'required|integer|min:1|max:100',
+            'idbuku' => 'nullable|integer',
+            'kode_buku' => 'nullable|string',
+            'tgl_batas_kembali' => 'nullable|date',
+            'keperluan' => 'nullable|string|max:255',
+        ]);
+
+        $rawNis = trim($request->nis);
+        $cleanNis = preg_replace('/^(siswa[-_:]?)/i', '', $rawNis);
+
+        $siswa = Siswa::with(['siswaKelas.kelasDetail.kelas'])
+            ->where(function ($q) use ($rawNis, $cleanNis) {
+                $q->where('nis', $rawNis)
+                  ->orWhere('nisn', $rawNis)
+                  ->orWhere('idsiswa', $rawNis)
+                  ->orWhere('nis', $cleanNis)
+                  ->orWhere('nisn', $cleanNis)
+                  ->orWhere('idsiswa', $cleanNis);
+            })->first();
+
+        if (!$siswa) {
+            return response()->json([
+                'success' => false,
+                'message' => "Siswa penanggung jawab kelas dengan nomor identitas/NIS '$rawNis' tidak ditemukan.",
+            ], 404);
+        }
+
+        // Resolusi buku master: bisa via idbuku atau kode_buku (kodebuku, isbn, atau sampel kodebukudetail)
+        $buku = null;
+        if ($request->filled('idbuku')) {
+            $buku = Buku::find($request->idbuku);
+        } elseif ($request->filled('kode_buku')) {
+            $rawKode = trim($request->kode_buku);
+            $buku = Buku::where('kodebuku', $rawKode)
+                ->orWhere('isbn', $rawKode)
+                ->first();
+
+            if (!$buku) {
+                // Cek apakah kode merupakan salah satu eksemplar fisik buku
+                $copy = $this->findBukuDetail($rawKode);
+                if ($copy) {
+                    $buku = $copy->buku;
+                }
+            }
+        }
+
+        if (!$buku) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Buku pelajaran tidak ditemukan. Silakan pilih buku dari katalog atau scan barcode buku.',
+            ], 404);
+        }
+
+        $jumlah = (int) $request->jumlah;
+
+        if ($buku->stok_tersedia < $jumlah) {
+            return response()->json([
+                'success' => false,
+                'message' => "Stok tersedia buku '{$buku->judul}' hanya tersisa {$buku->stok_tersedia} eksemplar (membutuhkan {$jumlah} eksemplar).",
+            ], 422);
+        }
+
+        // Ambil eksemplar fisik kondisi baik yang tidak sedang dipinjam
+        $availableCopies = BukuDetail::where('idbuku', $buku->idbuku)
+            ->where('kondisi', 'baik')
+            ->whereDoesntHave('pinjamDetails', function ($q) {
+                $q->whereHas('pinjam', function ($pq) {
+                    $pq->where('status', 'dipinjam');
+                });
+            })
+            ->take($jumlah)
+            ->get();
+
+        if ($availableCopies->count() < $jumlah) {
+            return response()->json([
+                'success' => false,
+                'message' => "Hanya tersedia {$availableCopies->count()} eksemplar fisik buku kondisi baik yang siap dipinjam (membutuhkan {$jumlah} eksemplar).",
+            ], 422);
+        }
+
+        $idPetugas = auth('sanctum')->id() ?? 2;
+        $now = Carbon::now();
+        $tglBatasKembali = $request->filled('tgl_batas_kembali')
+            ? Carbon::parse($request->tgl_batas_kembali)->toDateString()
+            : Carbon::today()->toDateString(); // Default peminjaman kelas adalah hari ini
+
+        DB::beginTransaction();
+        try {
+            $pinjam = Pinjam::create([
+                'idsiswa' => $siswa->idsiswa,
+                'idpetugas' => $idPetugas,
+                'waktu' => $now,
+                'tgl_batas_kembali' => $tglBatasKembali,
+                'status' => 'dipinjam',
+                'total_denda' => 0,
+            ]);
+
+            $detailRows = [];
+            $kodeList = [];
+            foreach ($availableCopies as $copy) {
+                $detailRows[] = [
+                    'idpinjam' => $pinjam->idpinjam,
+                    'idbukudetail' => $copy->idbukudetail,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ];
+                $kodeList[] = $copy->kodebukudetail;
+            }
+            PinjamDetail::insert($detailRows);
+
+            // Kurangi stok tersedia buku master
+            $buku->decrement('stok_tersedia', $availableCopies->count());
+
+            DB::commit();
+
+            $kelasNama = $siswa->siswaKelas->first()?->kelasDetail?->kelas?->kelas ?? 'Umum';
+
+            return response()->json([
+                'success' => true,
+                'message' => "Peminjaman kolektif sekelas berhasil dicatat ({$availableCopies->count()} buku).",
+                'data' => [
+                    'idpinjam' => $pinjam->idpinjam,
+                    'id_transaksi' => 'TRX-KOL-' . str_pad($pinjam->idpinjam, 5, '0', STR_PAD_LEFT),
+                    'penanggung_jawab' => [
+                        'idsiswa' => $siswa->idsiswa,
+                        'nis' => $siswa->nis,
+                        'nama' => $siswa->nama,
+                        'kelas' => $kelasNama,
+                    ],
+                    'buku' => [
+                        'idbuku' => $buku->idbuku,
+                        'judul' => $buku->judul,
+                        'penulis' => $buku->penulis ?? '-',
+                        'penerbit' => $buku->penerbit ?? '-',
+                        'kodebuku' => $buku->kodebuku ?? '-',
+                        'jumlah' => $availableCopies->count(),
+                        'sisa_stok_tersedia' => $buku->fresh()->stok_tersedia,
+                    ],
+                    'keperluan' => $request->input('keperluan', 'Kegiatan Belajar Mengajar di Kelas'),
+                    'waktu_pinjam' => $now->format('d M Y, H:i'),
+                    'tgl_batas_kembali' => Carbon::parse($tglBatasKembali)->format('d M Y'),
+                    'total_eksemplar' => count($kodeList),
+                    'daftar_eksemplar' => array_slice($kodeList, 0, 10),
+                ],
+            ], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memproses peminjaman kolektif: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Submit pengembalian peminjaman kolektif satu kelas sekaligus.
+     */
+    public function submitPengembalianKolektif(Request $request, ?int $idpinjam = null): JsonResponse
+    {
+        $id = $idpinjam ?? $request->input('idpinjam');
+        $pinjam = null;
+
+        if ($id) {
+            $pinjam = Pinjam::with(['siswa.siswaKelas.kelasDetail.kelas', 'pinjamDetails.bukuDetail.buku'])
+                ->where('status', 'dipinjam')
+                ->find($id);
+        } elseif ($request->filled('kodebukudetail')) {
+            $bukuDetail = $this->findBukuDetail($request->kodebukudetail);
+            if ($bukuDetail) {
+                $pDetail = PinjamDetail::where('idbukudetail', $bukuDetail->idbukudetail)
+                    ->whereHas('pinjam', fn ($q) => $q->where('status', 'dipinjam'))
+                    ->latest('idpinjamdetail')
+                    ->first();
+                if ($pDetail) {
+                    $pinjam = Pinjam::with(['siswa.siswaKelas.kelasDetail.kelas', 'pinjamDetails.bukuDetail.buku'])
+                        ->find($pDetail->idpinjam);
+                }
+            }
+        } elseif ($request->filled('nis')) {
+            $rawNis = trim($request->nis);
+            $cleanNis = preg_replace('/^(siswa[-_:]?)/i', '', $rawNis);
+            $siswa = Siswa::where(function ($q) use ($rawNis, $cleanNis) {
+                $q->where('nis', $rawNis)
+                  ->orWhere('nisn', $rawNis)
+                  ->orWhere('idsiswa', $rawNis)
+                  ->orWhere('nis', $cleanNis)
+                  ->orWhere('nisn', $cleanNis)
+                  ->orWhere('idsiswa', $cleanNis);
+            })->first();
+
+            if ($siswa) {
+                $pinjam = Pinjam::with(['siswa.siswaKelas.kelasDetail.kelas', 'pinjamDetails.bukuDetail.buku'])
+                    ->where('idsiswa', $siswa->idsiswa)
+                    ->where('status', 'dipinjam')
+                    ->latest('idpinjam')
+                    ->first();
+            }
+        }
+
+        if (!$pinjam || $pinjam->status !== 'dipinjam') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Transaksi peminjaman kolektif tidak ditemukan atau buku sudah berstatus dikembalikan.',
+            ], 404);
+        }
+
+        $today = Carbon::today();
+        $batasKembali = Carbon::parse($pinjam->tgl_batas_kembali)->startOfDay();
+        $terlambat = $today->greaterThan($batasKembali);
+        $totalDenda = $request->input('denda_dibayar', 0);
+
+        DB::beginTransaction();
+        try {
+            $pinjam->update([
+                'status' => $terlambat ? 'terlambat' : 'dikembalikan',
+                'tgl_dikembalikan' => $today->toDateString(),
+                'total_denda' => $totalDenda,
+            ]);
+
+            // Kembalikan stok tersedia untuk buku master yang bersangkutan
+            $countsByBuku = [];
+            foreach ($pinjam->pinjamDetails as $pDetail) {
+                if ($pDetail->bukuDetail && $pDetail->bukuDetail->idbuku) {
+                    $idbuku = $pDetail->bukuDetail->idbuku;
+                    $countsByBuku[$idbuku] = ($countsByBuku[$idbuku] ?? 0) + 1;
+                }
+            }
+
+            foreach ($countsByBuku as $idbuku => $count) {
+                Buku::where('idbuku', $idbuku)->increment('stok_tersedia', $count);
+            }
+
+            DB::commit();
+
+            $siswa = $pinjam->siswa;
+            $kelasNama = $siswa?->siswaKelas->first()?->kelasDetail?->kelas?->kelas ?? 'Umum';
+            $totalBuku = $pinjam->pinjamDetails->count();
+            $firstBuku = $pinjam->pinjamDetails->first()?->bukuDetail?->buku;
+
+            return response()->json([
+                'success' => true,
+                'message' => "Pengembalian kolektif sebanyak {$totalBuku} buku berhasil diselesaikan.",
+                'data' => [
+                    'idpinjam' => $pinjam->idpinjam,
+                    'id_transaksi' => 'TRX-KOL-' . str_pad($pinjam->idpinjam, 5, '0', STR_PAD_LEFT),
+                    'nama_penanggung_jawab' => $siswa?->nama ?? 'Siswa',
+                    'nis' => $siswa?->nis ?? '-',
+                    'kelas' => $kelasNama,
+                    'judul_buku' => $firstBuku?->judul ?? 'Buku Paket Pelajaran',
+                    'jumlah_dikembalikan' => $totalBuku,
+                    'status' => $pinjam->fresh()->status,
+                    'tgl_dikembalikan' => $today->toDateString(),
+                ],
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memproses pengembalian kolektif: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
 }

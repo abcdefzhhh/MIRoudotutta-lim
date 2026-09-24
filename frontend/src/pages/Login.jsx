@@ -68,10 +68,10 @@ export default function Login() {
             </div>
           </Link>
           <h1 className="mt-4 font-heading text-2xl font-bold text-white tracking-tight">
-            Panel Administrasi TU
+            Panel Administrasi
           </h1>
           <p className="text-xs text-emerald-200/80 mt-1">
-            MI Roudotutta'lim — SIPERPUS Terpadu
+            MI Roudotutta'lim — SIPERPUS
           </p>
         </div>
 
@@ -182,7 +182,7 @@ export default function Login() {
           <div className="mt-6 pt-5 border-t border-slate-100 flex flex-col gap-2">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-medium text-slate-500">
-                Akun Standar Staf TU:
+                Akun Standar Admin:
               </span>
               <button
                 type="button"
