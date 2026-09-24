@@ -1,240 +1,306 @@
 import { Link } from 'react-router-dom'
+import { useEffect, useRef } from 'react'
 import eskulBg from '../assets/eskul.jpg'
 import hadrahImg from '../assets/eskul-hadrah.jpg'
 import futsalImg from '../assets/eskul-futsal.jpg'
 import silatImg from '../assets/eskul-silat.jpg'
 import paskibraImg from '../assets/eskul-paskibra.jpg'
-import useScrollReveal, { useStaggerReveal } from '../hooks/useScrollReveal'
 
-export default function Ekstrakurikuler() {
-  const introRef = useScrollReveal()
-  const gridRef = useStaggerReveal({ staggerMs: 90 })
-  const ctaRef = useScrollReveal()
+function useReveal() {
+  const ref = useRef(null)
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.classList.add('is-visible')
+          obs.unobserve(el)
+        }
+      },
+      { threshold: 0.12 }
+    )
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [])
+  return ref
+}
 
-  const activities = [
-    {
-      title: 'Tahfidz Club & Tilawah',
-      category: 'Keagamaan & Al-Qur\'an',
-      schedule: 'Selasa & Kamis Sore',
-      desc: 'Penguatan muraja\'ah Juz \'Amma, pendalaman makharijul huruf, dan pembelajaran irama tartil untuk persiapan tasmi\' dan khotmil Qur\'an bersama dewan asatidz.',
-      icon: 'menu_book',
-      badgeColor: 'bg-gold text-ink font-semibold',
-      image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC11OoNNfMTQw4KSD1t0JIbMBmFD0yY_fYTGQSNdI2_OXOovTFAG4kVZtABk4-S_SJ0Sh03bCYnCAsj-02468km3QdO5pUlC0JZdejW7lDMuIAW6CKeHS4SGZIArSZGWTGXHJCfKwZkeVJTO-f3kK-xgPlNYyp8US4OqVunHJb9vmnwIFouc7U3x8wRbD4D2NfSYPbJ90MgeXaSjmj1AGTMtSm8zmRaB2COp6FITjdSatV-4KISBdwKuA',
-      alt: 'Santri menghafal Al-Qur\'an dan seni tilawah',
-    },
-    {
-      title: 'Futsal & Olahraga',
-      category: 'Olahraga & Sportivitas',
-      schedule: 'Setiap Sabtu Pagi',
-      desc: 'Menyalurkan energi positif, melatih ketahanan fisik, koordinasi motorik, sportivitas, serta kerjasama tim yang solid di lapangan olahraga madrasah.',
-      icon: 'sports_soccer',
-      badgeColor: 'bg-emerald-leaf-soft text-white',
-      image: futsalImg,
-      alt: 'Anak-anak bermain futsal di lapangan sekolah',
-    },
-    {
-      title: 'Pencak Silat',
-      category: 'Bela Diri & Karakter',
-      schedule: 'Setiap Sabtu Pagi',
-      desc: 'Membekali siswa dengan kemampuan bela diri khas nusantara, melatih kedisiplinan, keberanian, kekuatan fisik, dan mental pantang menyerah dalam bingkai sportivitas islami.',
-      icon: 'sports_martial_arts',
-      badgeColor: 'bg-emerald-deep text-white',
-      image: silatImg,
-      alt: 'Siswa berlatih pencak silat di halaman madrasah',
-    },
-    {
-      title: 'Seni Hadroh & Rebana',
-      category: 'Seni & Budaya Islam',
-      schedule: 'Setiap Sabtu Pagi',
-      desc: 'Mengenalkan kecintaan pada sholawat nabi melalui kesenian hadrah klasik, melatih kepekaan ritme, kekompakan tim, dan ekspresi seni islami yang merdu.',
-      icon: 'music_note',
-      badgeColor: 'bg-emerald-leaf text-white',
-      image: hadrahImg,
-      alt: 'Siswa bermain hadrah rebana di madrasah',
-    },
-    {
-      title: 'Pramuka Siaga & Penggalang',
-      category: 'Kepanduan & Karakter',
-      schedule: 'Setiap Jumat Sore',
-      desc: 'Melatih kemandirian, kedisiplinan, tali-temali, pertolongan pertama, kepedulian sosial, dan kecintaan pada alam dalam bingkai semangat kepanduan dan adab islami.',
-      icon: 'explore',
-      badgeColor: 'bg-emerald-deep text-white',
-      image: eskulBg,
-      alt: 'Kegiatan Pramuka Siswa MI Roudotutta\'lim',
-    },
-    {
-      title: 'Paskibra',
-      category: 'Nasionalisme & Kedisiplinan',
-      schedule: 'Setiap Jumat Sore',
-      desc: 'Membentuk siswa berjiwa patriot, penuh rasa cinta tanah air, dan berkedisiplinan tinggi melalui latihan baris-berbaris, pengibaran bendera, dan upacara resmi madrasah.',
-      icon: 'flag',
-      badgeColor: 'bg-gold text-ink font-semibold',
-      image: paskibraImg,
-      alt: 'Siswa paskibra berlatih pengibaran bendera',
-    },
-  ]
+const activities = [
+  {
+    title: "Tahfidz Club & Tilawah",
+    category: "Keagamaan & Al-Qur'an",
+    icon: 'menu_book',
+    desc: "Penguatan muraja'ah Juz 'Amma, pendalaman makharijul huruf, dan pembelajaran irama tartil bersama dewan asatidz — menanamkan cinta Al-Qur'an sejak dini melalui hafalan yang mengalir dan indah.",
+    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC11OoNNfMTQw4KSD1t0JIbMBmFD0yY_fYTGQSNdI2_OXOovTFAG4kVZtABk4-S_SJ0Sh03bCYnCAsj-02468km3QdO5pUlC0JZdejW7lDMuIAW6CKeHS4SGZIArSZGWTGXHJCfKwZkeVJTO-f3kK-xgPlNYyp8US4OqVunHJb9vmnwIFouc7U3x8wRbD4D2NfSYPbJ90MgeXaSjmj1AGTMtSm8zmRaB2COp6FITjdSatV-4KISBdwKuA',
+    alt: "Santri menghafal Al-Qur'an",
+    accent: '#D9A62B',
+    tag: "Al-Qur'an",
+  },
+  {
+    title: 'Seni Hadroh & Rebana',
+    category: 'Seni & Budaya Islam',
+    icon: 'music_note',
+    desc: 'Kecintaan pada sholawat nabi dihidupkan lewat irama hadrah klasik — latihan kepekaan ritme, kekompakan antar anggota, dan ekspresi seni islami yang merdu dan penuh keberkahan.',
+    image: hadrahImg,
+    alt: 'Siswa bermain hadrah rebana',
+    accent: '#1E7A42',
+    tag: 'Seni Islami',
+  },
+  {
+    title: 'Pencak Silat',
+    category: 'Bela Diri & Karakter',
+    icon: 'sports_martial_arts',
+    desc: 'Bela diri warisan leluhur nusantara — membekali siswa dengan kekuatan fisik, keberanian yang terlatih, dan mental pantang menyerah dalam bingkai sportivitas dan akhlak islami.',
+    image: silatImg,
+    alt: 'Siswa berlatih pencak silat',
+    accent: '#0B4A2E',
+    tag: 'Bela Diri',
+  },
+  {
+    title: 'Futsal & Olahraga',
+    category: 'Olahraga & Sportivitas',
+    icon: 'sports_soccer',
+    desc: 'Energi positif tersalur, tubuh sehat terbentuk — latihan futsal dan kebugaran melatih koordinasi motorik, kerjasama tim, dan semangat sportivitas di lapangan madrasah.',
+    image: futsalImg,
+    alt: 'Siswa bermain futsal di lapangan',
+    accent: '#2C8F52',
+    tag: 'Olahraga',
+  },
+  {
+    title: 'Pramuka Siaga & Penggalang',
+    category: 'Kepanduan & Karakter',
+    icon: 'explore',
+    desc: 'Kemandirian, kedisiplinan, kepedulian sosial, dan kecintaan pada alam dibangun melalui kegiatan pramuka yang penuh petualangan, tali-temali, dan semangat tolong-menolong.',
+    image: eskulBg,
+    alt: 'Kegiatan pramuka siswa',
+    accent: '#0B4A2E',
+    tag: 'Kepanduan',
+  },
+  {
+    title: 'Paskibra',
+    category: 'Nasionalisme & Kedisiplinan',
+    icon: 'flag',
+    desc: 'Jiwa patriot dan cinta tanah air tumbuh dalam disiplin baris-berbaris — siswa dilatih mengemban kehormatan pengibaran bendera Merah Putih dengan tegak dan penuh kebanggaan.',
+    image: paskibraImg,
+    alt: 'Siswa paskibra pengibaran bendera',
+    accent: '#D9A62B',
+    tag: 'Nasionalisme',
+  },
+]
+
+function ActivityRow({ act, index }) {
+  const ref = useReveal()
+  const isEven = index % 2 === 0
 
   return (
-    <div className="w-full bg-ivory pt-24 pb-20">
-      {/* Header Banner with eskul Background */}
-      <section className="relative text-white py-18 sm:py-24 lg:py-28 overflow-hidden bg-emerald-deep shadow-md">
-        {/* Full-bleed Photo Background Container */}
-        <div className="absolute inset-0 z-0">
+    <article
+      ref={ref}
+      className="ekskul-reveal flex flex-col lg:flex-row rounded-2xl overflow-hidden border border-border/70 bg-white shadow-sm hover:shadow-md transition-shadow duration-300 group"
+    >
+      {/* Photo side */}
+      <div
+        className={`relative w-full lg:w-[52%] aspect-[4/3] lg:aspect-auto lg:min-h-[360px] overflow-hidden shrink-0 ${
+          isEven ? 'lg:order-1' : 'lg:order-2'
+        }`}
+      >
+        <img
+          src={act.image}
+          alt={act.alt}
+          loading="lazy"
+          className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink/55 via-ink/10 to-transparent pointer-events-none" />
+        <div className="absolute bottom-4 left-4">
+          <span
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold tracking-wide text-white shadow-sm"
+            style={{ backgroundColor: act.accent }}
+          >
+            <span className="material-symbols-outlined text-[13px]">{act.icon}</span>
+            {act.tag}
+          </span>
+        </div>
+      </div>
+
+      {/* Content side */}
+      <div
+        className={`flex flex-col justify-center p-8 lg:p-10 xl:p-12 ${
+          isEven ? 'lg:order-2' : 'lg:order-1'
+        }`}
+      >
+        <p
+          className="text-[11px] font-bold tracking-widest uppercase mb-3"
+          style={{ color: act.accent }}
+        >
+          {act.category}
+        </p>
+        <h2 className="font-heading font-bold text-2xl lg:text-[1.85rem] text-ink leading-tight mb-4">
+          {act.title}
+        </h2>
+        <div
+          className="w-10 h-[3px] mb-5 rounded-full"
+          style={{ backgroundColor: act.accent }}
+        />
+        <p className="font-body text-sm lg:text-[0.95rem] text-ink-soft leading-relaxed">
+          {act.desc}
+        </p>
+        <div className="mt-6 pt-5 border-t border-border/50 flex items-center gap-2 text-xs text-ink-soft">
+          <span className="material-symbols-outlined text-[16px] text-emerald-leaf">groups</span>
+          <span>
+            Terbuka untuk siswa{' '}
+            <strong className="text-ink font-semibold">Kelas 1 - 6</strong>
+          </span>
+        </div>
+      </div>
+    </article>
+  )
+}
+
+export default function Ekstrakurikuler() {
+  const statsRef = useReveal()
+  const introRef = useReveal()
+  const ctaRef = useReveal()
+
+  return (
+    <div className="w-full bg-ivory">
+
+      {/* HERO */}
+      <section className="relative min-h-[72vh] flex items-end overflow-hidden bg-ink">
+        <div className="absolute inset-0">
           <img
             src={eskulBg}
-            alt="Kegiatan Ekstrakurikuler Siswa MI Roudotutta'lim"
-            className="w-full h-full object-cover object-center filter brightness-90 transform scale-105 transition-transform duration-1000"
+            alt="Kegiatan Ekstrakurikuler MI Roudotutta'lim"
+            className="w-full h-full object-cover object-center"
           />
-          {/* Multi-layered dark gradient overlay for optimal readability & Islamic emerald aesthetic */}
-          <div className="absolute inset-0 bg-gradient-to-r from-ink/95 via-emerald-deep/90 to-emerald-deep/80"></div>
-          <div className="absolute inset-0 bg-black/25"></div>
-          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#D9A62B_1px,transparent_1px)] [background-size:24px_24px]"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/75 to-ink/15" />
+          <div
+            className="absolute inset-0 opacity-[0.06]"
+            style={{
+              backgroundImage: 'radial-gradient(#D9A62B 1px, transparent 1px)',
+              backgroundSize: '28px 28px',
+            }}
+          />
         </div>
 
-        <div className="max-w-[1240px] mx-auto px-margin-mobile lg:px-margin relative z-10">
-          <div className="max-w-3xl animate-slide-up">
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-bold text-white tracking-tight leading-tight drop-shadow-sm">
-              Ekstrakurikuler &amp; Bakat Siswa
-            </h1>
-            <p className="mt-4 text-base sm:text-lg text-emerald-50/90 font-body leading-relaxed max-w-2xl">
-              Wadah eksplorasi minat, pembentukan jiwa kepemimpinan, pengasahan keterampilan seni islami, dan kebugaran jasmani di luar jam belajar formal.
+        <div className="relative z-10 w-full max-w-[1240px] mx-auto px-margin-mobile lg:px-margin pt-40 pb-0">
+          <div className="max-w-3xl">
+            <p className="font-body text-gold text-xs font-bold tracking-widest uppercase mb-4">
+              Pengembangan Diri Siswa
             </p>
+            <h1 className="font-heading font-bold text-4xl sm:text-5xl lg:text-[3.5rem] text-white leading-[1.1] tracking-tight">
+              Bakat Berkembang,
+              <br />
+              <span className="text-gold">Karakter Terbentuk</span>
+            </h1>
+            <p className="mt-5 font-body text-base sm:text-lg text-white/75 leading-relaxed max-w-2xl">
+              Enam kegiatan ekstrakurikuler yang dirancang untuk menyeimbangkan kecerdasan
+              spiritual, fisik, seni, dan jiwa kepemimpinan siswa madrasah.
+            </p>
+          </div>
+
+          {/* Stats strip */}
+          <div
+            ref={statsRef}
+            className="ekskul-reveal mt-12 flex flex-wrap rounded-xl overflow-hidden border border-white/10"
+          >
+            {[
+              { value: '6', label: 'Ekskul Aktif' },
+              { value: '100%', label: 'Terbimbing Pengajar' },
+              { value: 'Kelas 1 - 6', label: 'Semua Jenjang' },
+              { value: 'Gratis', label: 'Tanpa Biaya Tambahan' },
+            ].map((s, i) => (
+              <div
+                key={s.label}
+                className={`flex-1 min-w-[120px] bg-white/8 backdrop-blur-sm px-6 py-4 text-center border-white/10 ${
+                  i > 0 ? 'border-l' : ''
+                }`}
+              >
+                <p className="font-heading font-bold text-xl sm:text-2xl text-gold">{s.value}</p>
+                <p className="font-body text-[11px] text-white/55 mt-0.5">{s.label}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Main Container */}
-      <div className="max-w-[1240px] mx-auto px-margin-mobile lg:px-margin mt-12 space-y-16">
-        {/* Intro Highlight Banner */}
-        <section className="bg-white rounded-2xl border border-border p-6 lg:p-8 shadow-xs flex flex-col md:flex-row items-center justify-between gap-6" ref={introRef}>
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-gold/20 text-emerald-deep flex items-center justify-center shrink-0">
-              <span className="material-symbols-outlined text-[28px] text-emerald-deep">stars</span>
-            </div>
-            <div>
-              <h3 className="font-heading font-bold text-lg text-emerald-deep">
-                Pola Pembinaan Seimbang
-              </h3>
-              <p className="text-xs sm:text-sm text-ink-soft">
-                Seluruh kegiatan ekstrakurikuler dirancang komplementer terhadap kegiatan akademik Siswa tanpa membebani rutinitas harian.
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-6 shrink-0 border-t md:border-t-0 md:border-l border-border pt-4 md:pt-0 md:pl-6 text-xs text-ink-soft">
-            <div>
-              <span className="block font-heading font-bold text-xl text-emerald-deep">6 Pilihan</span>
-              Ekskul Aktif
-            </div>
-            <div>
-              <span className="block font-heading font-bold text-xl text-emerald-deep">100%</span>
-              Terbimbing Pengajar
-            </div>
-          </div>
-        </section>
+      {/* INTRO PROSE */}
+      <div
+        ref={introRef}
+        className="ekskul-reveal max-w-[1240px] mx-auto px-margin-mobile lg:px-margin py-16 lg:py-20"
+      >
+        <div className="max-w-2xl">
+          <h2 className="font-heading font-bold text-2xl sm:text-3xl text-emerald-deep leading-snug">
+            Lebih dari Sekadar Kegiatan Tambahan
+          </h2>
+          <p className="font-body text-base text-ink-soft leading-relaxed mt-4">
+            Di MI Roudotutta'lim, setiap ekskul adalah bagian utuh dari proses pembentukan karakter
+            — bukan pelengkap jadwal. Siswa belajar bekerja dalam tim, menemukan minat terdalam
+            mereka, dan membangun kepercayaan diri yang berlandaskan nilai-nilai islami.
+          </p>
+        </div>
+      </div>
 
-        {/* Activities Grid */}
-        <section>
-          <div className="max-w-2xl mb-8">
-            <span className="text-xs font-bold uppercase tracking-wider text-emerald-leaf">Ragam Pilihan Kegiatan</span>
-            <h2 className="text-2xl sm:text-3xl font-heading font-bold text-emerald-deep mt-1">
-              Temukan Bakat Terbaik Ananda
+      {/* ACTIVITY ROWS */}
+      <div className="max-w-[1240px] mx-auto px-margin-mobile lg:px-margin pb-20 flex flex-col gap-6">
+        {activities.map((act, i) => (
+          <ActivityRow key={act.title} act={act} index={i} />
+        ))}
+      </div>
+
+      {/* CTA */}
+      <section
+        ref={ctaRef}
+        className="ekskul-reveal relative overflow-hidden bg-emerald-deep"
+      >
+        <div
+          className="absolute inset-0 opacity-[0.05]"
+          style={{
+            backgroundImage: 'radial-gradient(#D9A62B 1px, transparent 1px)',
+            backgroundSize: '24px 24px',
+          }}
+        />
+        <div className="relative z-10 max-w-[1240px] mx-auto px-margin-mobile lg:px-margin py-16 sm:py-20 flex flex-col sm:flex-row items-center gap-8 justify-between">
+          <div className="max-w-xl">
+            <p className="font-body text-gold text-xs font-bold tracking-widest uppercase mb-3">
+              Pendaftaran Peserta Didik Baru
+            </p>
+            <h2 className="font-heading font-bold text-2xl sm:text-3xl text-white leading-snug">
+              Ananda Termasuk yang Mana?
             </h2>
-            <p className="text-sm text-ink-soft mt-1">
-              Siswa dapat memilih kegiatan ekstrakurikuler sesuai bakat alami dan minat yang ingin dikembangkan.
+            <p className="font-body text-sm text-white/70 leading-relaxed mt-3">
+              Daftarkan putra-putri Anda ke MI Roudotutta'lim dan biarkan bakat mereka berkembang
+              dalam lingkungan madrasah yang hangat dan berwibawa.
             </p>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" ref={gridRef}>
-            {activities.map((act, index) => (
-              <div
-                key={index}
-                className="reveal-child bg-white rounded-2xl border border-border/80 overflow-hidden flex flex-col justify-between hover:shadow-xl hover:border-emerald-leaf/40 transform hover:-translate-y-1.5 transition-all duration-300 group"
-              >
-                <div>
-                  {/* Photo Cover with Category Badge & Schedule */}
-                  <div className="relative w-full aspect-[16/10] overflow-hidden bg-slate-100">
-                    <img
-                      src={act.image}
-                      alt={act.alt || act.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent opacity-70 group-hover:opacity-50 transition-opacity" />
-
-                    {/* Floating Category Badge */}
-                    <div className="absolute top-3 left-3">
-                      <span className={`px-2.5 py-1 rounded-md text-[11px] font-semibold tracking-wide shadow-xs ${act.badgeColor}`}>
-                        {act.category}
-                      </span>
-                    </div>
-
-                    {/* Floating Schedule Pill */}
-                    <div className="absolute bottom-3 left-3 flex items-center gap-1.5 text-white text-[11px] font-medium bg-black/60 backdrop-blur-xs px-2.5 py-1 rounded-md">
-                      <span className="material-symbols-outlined text-[14px] text-gold">schedule</span>
-                      <span>{act.schedule}</span>
-                    </div>
-                  </div>
-
-                  {/* Body Content */}
-                  <div className="p-5 sm:p-6">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-8 h-8 rounded-lg bg-emerald-deep/10 text-emerald-deep flex items-center justify-center shrink-0 group-hover:bg-emerald-deep group-hover:text-white transition-colors">
-                        <span className="material-symbols-outlined text-[20px]">{act.icon}</span>
-                      </div>
-                      <h3 className="font-heading font-bold text-lg text-ink group-hover:text-emerald-deep transition-colors leading-tight">
-                        {act.title}
-                      </h3>
-                    </div>
-
-                    <p className="font-body text-sm text-ink-soft leading-relaxed mt-2.5">
-                      {act.desc}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Card Footer */}
-                <div className="px-5 sm:px-6 pb-5 pt-0">
-                  <div className="pt-3.5 border-t border-border/60 flex items-center justify-between text-xs text-ink-soft">
-                    <span className="inline-flex items-center gap-1.5 text-emerald-deep font-semibold">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-leaf" />
-                      Tingkat Kelas 1 - 6
-                    </span>
-                    <span className="material-symbols-outlined text-[18px] text-border group-hover:text-emerald-leaf group-hover:translate-x-1 transition-all">
-                      arrow_forward
-                    </span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* CTA Banner */}
-        <section className="bg-emerald-deep rounded-2xl text-white p-8 sm:p-10 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-sm" ref={ctaRef}>
-          <div>
-            <h3 className="text-xl sm:text-2xl font-heading font-bold text-white">
-              Siap Mengembangkan Potensi Buah Hati Anda?
-            </h3>
-            <p className="text-sm text-emerald-100/90 mt-1 max-w-xl">
-              Bergabunglah bersama keluarga besar MI Roudotutta'lim. Dapatkan pendidikan yang memadukan kedalaman ilmu dan keluhuran akhlak.
-            </p>
-          </div>
-          <div className="flex flex-wrap items-center gap-3 shrink-0">
+          <div className="flex flex-col sm:flex-row gap-3 shrink-0 w-full sm:w-auto">
             <Link
               to="/ppdb"
-              className="px-6 py-3 rounded-full bg-gold text-ink font-semibold text-sm hover:bg-gold-soft transition-colors shadow-sm active:scale-[0.98]"
+              className="flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-gold text-ink font-semibold text-sm hover:bg-[#F0D68A] active:scale-[0.98] transition-all duration-200 shadow-sm"
             >
-              Informasi &amp; Persyaratan PPDB
+              Info &amp; Persyaratan PPDB
+              <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
             </Link>
             <Link
-              to="/"
-              className="px-5 py-3 rounded-full border border-white/30 text-white font-medium text-sm hover:bg-white/10 transition-colors"
+              to="/kontak"
+              className="flex items-center justify-center gap-2 px-7 py-3.5 rounded-full border border-white/25 text-white font-medium text-sm hover:bg-white/10 transition-colors"
             >
-              Kembali ke Beranda
+              Hubungi Kami
             </Link>
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
+
+      <style>{`
+        .ekskul-reveal {
+          opacity: 0;
+          transform: translateY(24px);
+          transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .ekskul-reveal.is-visible {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      `}</style>
     </div>
   )
 }
