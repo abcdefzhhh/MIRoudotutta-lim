@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\GuruController;
 use App\Http\Controllers\Api\KelasController;
 use App\Http\Controllers\Api\PinjamController;
 use App\Http\Controllers\Api\RombelController;
+use App\Http\Controllers\Api\SiperpusApiController;
 use App\Http\Controllers\Api\SiswaController;
 use App\Http\Controllers\Api\TahunAjaranController;
 use App\Models\Berita;
@@ -131,8 +132,6 @@ Route::delete('/berita/{id}', [BeritaController::class, 'destroy']);
 
 
 // Layanan Sirkulasi Mobile SIPERPUS (Barcode Scanner & Mobile Service)
-use App\Http\Controllers\Api\SiperpusApiController;
-
 Route::prefix('siperpus')->group(function () {
     Route::post('/buku/{kode}/kondisi', [SiperpusApiController::class, 'updateKondisiBuku']);
 
