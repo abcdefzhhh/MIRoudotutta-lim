@@ -116,6 +116,10 @@ Route::delete('/buku/{id}', [BukuController::class, 'destroy']);
 // Transaksi Peminjaman
 Route::get('/pinjam', [PinjamController::class, 'index']);
 Route::get('/pinjam/{id}', [PinjamController::class, 'show']);
+Route::post('/pinjam', [SiperpusApiController::class, 'submitPeminjaman']);
+Route::post('/pinjam/kolektif', [SiperpusApiController::class, 'submitPeminjamanKolektif']);
+Route::post('/kembali/kolektif/{idpinjam?}', [SiperpusApiController::class, 'submitPengembalianKolektif']);
+Route::post('/kembali', [SiperpusApiController::class, 'submitPengembalian']);
 
 // Berita Madrasah
 Route::get('/berita', [BeritaController::class, 'index']);

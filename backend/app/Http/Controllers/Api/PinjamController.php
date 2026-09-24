@@ -39,6 +39,14 @@ class PinjamController extends Controller
             });
         }
 
+        if ($request->filled('tipe')) {
+            if ($request->tipe === 'kolektif') {
+                $query->has('pinjamDetails', '>=', 4);
+            } elseif ($request->tipe === 'mandiri') {
+                $query->has('pinjamDetails', '<=', 3);
+            }
+        }
+
         if ($request->filled('tgl_mulai')) {
             $query->whereDate('waktu', '>=', $request->tgl_mulai);
         }
@@ -57,6 +65,8 @@ class PinjamController extends Controller
             'sudah_kembali' => Pinjam::where('status', 'dikembalikan')->count(),
             'terlambat' => Pinjam::where('status', 'terlambat')->count(),
             'total_denda' => (float) Pinjam::sum('total_denda'),
+            'total_kolektif' => Pinjam::has('pinjamDetails', '>=', 4)->count(),
+            'total_mandiri' => Pinjam::has('pinjamDetails', '<=', 3)->count(),
         ];
 
         return response()->json([
