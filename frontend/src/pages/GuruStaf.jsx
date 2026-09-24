@@ -276,7 +276,27 @@ export default function GuruStaf() {
   }
 
   useEffect(() => {
-    fetchTeachers()
+    let isMounted = true
+    axios
+      .get('http://127.0.0.1:8000/api/guru', { params: { per_page: 100 } })
+      .then((res) => {
+        if (isMounted && res.data?.success && res.data.data?.data) {
+          setTeachers(res.data.data.data)
+        }
+      })
+      .catch((err) => {
+        if (isMounted) {
+          console.error(err)
+          setError('Gagal memuat data dewan guru dari server.')
+        }
+      })
+      .finally(() => {
+        if (isMounted) setLoading(false)
+      })
+
+    return () => {
+      isMounted = false
+    }
   }, [])
 
   // Categorize and filter teachers
