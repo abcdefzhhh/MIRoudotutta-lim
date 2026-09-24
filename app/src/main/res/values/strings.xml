@@ -1,0 +1,38 @@
+<resources>
+    <string name="app_name">SiPerpus</string>
+    <string name="school_name">MI Roudotutta\'lim</string>
+    <string name="app_subname">Sistem Informasi Perpustakaan &amp; Sirkulasi</string>
+    <string name="librarian_portal">Portal Khusus Pustakawan</string>
+
+    <!-- Bottom Navigation -->
+    <string name="menu_kunjungan">Presensi</string>
+    <string name="menu_peminjaman">Peminjaman</string>
+    <string name="menu_pengembalian">Pengembalian</string>
+    <string name="menu_riwayat">Riwayat</string>
+    <string name="menu_pengaturan">Pengaturan</string>
+
+    <!-- General actions -->
+    <string name="login">Masuk sebagai Petugas</string>
+    <string name="logout">Keluar Akun</string>
+    <string name="cancel">Batal</string>
+    <string name="confirm">Konfirmasi</string>
+    <string name="save">Simpan</string>
+    <string name="retry">Coba Lagi</string>
+    <string name="scan_barcode">Pindai Barcode</string>
+    <string name="manual_input">Input Manual</string>
+
+    <!-- Peminjaman Flow -->
+    <string name="step_1_scan_student">Langkah 1: Scan Kartu Siswa</string>
+    <string name="step_2_scan_book">Langkah 2: Scan Barcode Buku</string>
+    <string name="borrow_cart">Daftar Buku Dipinjam</string>
+    <string name="confirm_borrow">Konfirmasi Peminjaman</string>
+
+    <!-- Pengembalian Flow -->
+    <string name="return_scanner_title">Scanner Pengembalian</string>
+    <string name="return_scanner_sub">Cek Status Pinjam, Stok &amp; Denda</string>
+    <string name="book_condition">Kondisi Fisik Buku</string>
+    <string name="cond_good">Baik &amp; Utuh</string>
+    <string name="cond_minor">Rusak Ringan</string>
+    <string name="cond_lost">Buku Hilang</string>
+    <string name="confirm_return">Konfirmasi Pengembalian</string>
+</resources>
