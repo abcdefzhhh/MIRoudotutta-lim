@@ -4,61 +4,65 @@ title SIPERPUS - USB Port Forwarding (Auto Keep-Alive)
 color 0A
 cls
 
-set "ADB_PATH=%LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe"
-if exist "%ADB_PATH%" (
-    set "ADB=%ADB_PATH%"
-) else (
-    set "ADB=adb"
+:: Tambahkan platform-tools Android ke PATH lokal sesi ini
+if exist "%LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe" (
+    set "PATH=%LOCALAPPDATA%\Android\Sdk\platform-tools;%PATH%"
 )
 
 echo ======================================================================
 echo           SIPERPUS - PENGHUBUNG HP KE BACKEND LAPTOP (USB)
 echo ======================================================================
 echo.
-echo Mode: AUTO KEEP-ALIVE (Biarkan jendela ini tetap terbuka saat coding/testing)
+echo Mode: AUTO KEEP-ALIVE (Mendukung semua merk HP Android)
 echo.
 
 :check_device
-echo [1/2] Memeriksa koneksi perangkat HP...
-"%ADB%" devices | findstr /R /C:"[a-zA-Z0-9].*device$" >nul
+adb devices | findstr /R /C:"[a-zA-Z0-9].*device$" >nul
 if %ERRORLEVEL% NEQ 0 (
     color 0C
+    echo [PERHATIAN] Belum ada HP yang terdeteksi via USB!
     echo.
-    echo [PERHATIAN] HP belum terdeteksi!
-    echo 1. Pastikan kabel data USB sudah tercolok ke laptop dan HP.
-    echo 2. Aktifkan 'USB Debugging' di Pengaturan -^> Opsi Pengembang di HP Anda.
-    echo 3. Izinkan popup 'Allow USB Debugging' di layar HP Anda jika muncul.
+    echo Pastikan di HP baru yang dicolokkan:
+    echo 1. Fitur 'USB Debugging' sudah DIAKTIFKAN di Opsi Pengembang HP.
+    echo 2. Jika muncul popup 'Izinkan USB Debugging', centang 'Selalu Izinkan' lalu klik OK.
     echo.
-    echo Menunggu HP tercolok...
-    timeout /t 3 >nul
+    echo Menunggu HP terhubung...
+    ping 127.0.0.1 -n 3 >nul
     goto check_device
 )
 
 color 0A
-echo [OK] HP terdeteksi!
+cls
+echo ======================================================================
+echo           SIPERPUS - PENGHUBUNG HP KE BACKEND LAPTOP (USB)
+echo ======================================================================
 echo.
-echo [2/2] Mengaktifkan jalur USB: Port 8000 HP -^> Port 8000 Laptop...
-"%ADB%" reverse tcp:8000 tcp:8000 >nul 2>&1
+echo [DAFTAR HP TERHUBUNG]:
+adb devices
+echo.
 
-if %ERRORLEVEL% EQU 0 (
-    echo.
-    echo ======================================================================
-    echo   [SUKSES] HP DAN BACKEND LAPTOP BERHASIL TERSAMBUNG!
-    echo ======================================================================
-    echo   * URL API di HP : http://127.0.0.1:8000/api/
-    echo   * Pindah Wi-Fi mana pun, koneksi TIDAK AKAN PERNAH TERPUTUS.
-    echo   * Silakan buka aplikasi SIPERPUS di HP Anda dan tekan Login.
-    echo ======================================================================
-    echo.
-    echo (Jendela ini menjaga koneksi tetap aktif jika kabel dicabut/pasang kembali)
-    echo Tekan Ctrl+C untuk menutup jika sudah selesai.
-    echo.
-) else (
-    color 0E
-    echo [INFO] Gagal setting reverse port, mencoba lagi...
+:: Terapkan port forwarding ke setiap HP yang terhubung
+for /f "tokens=1" %%d in ('adb devices ^| findstr /R /C:"[a-zA-Z0-9].*device$"') do (
+    adb -s %%d reverse tcp:8000 tcp:8000 >nul 2>&1
+    echo [OK] Port 8000 diteruskan ke perangkat ID: %%d
 )
 
+echo.
+echo ======================================================================
+echo   [SUKSES] SEMUA HP YANG TERCOLOK SUDAH TERSAMBUNG KE BACKEND LAPTOP!
+echo ======================================================================
+echo   * URL API di HP  : http://127.0.0.1:8000/api/
+echo   * Pindah Wi-Fi manapun, koneksi TIDAK AKAN TERPUTUS.
+echo   * Buka aplikasi SIPERPUS di HP dan langsung Login.
+echo ======================================================================
+echo.
+echo (Jendela ini menjaga koneksi tetap aktif otomatis)
+echo Tekan Ctrl+C untuk menutup jika sudah selesai.
+echo.
+
 :loop
-timeout /t 3 >nul
-"%ADB%" reverse tcp:8000 tcp:8000 >nul 2>&1
+ping 127.0.0.1 -n 4 >nul
+for /f "tokens=1" %%d in ('adb devices ^| findstr /R /C:"[a-zA-Z0-9].*device$"') do (
+    adb -s %%d reverse tcp:8000 tcp:8000 >nul 2>&1
+)
 goto loop
