@@ -264,56 +264,7 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        // 6. Data 3 Transaksi Peminjaman (Dipinjam, Terlambat, Selesai/Dikembalikan)
-        // Transaksi 1: Status 'dipinjam' (peminjaman aktif)
-        $pinjam1 = Pinjam::create([
-            'idsiswa' => $createdSiswa[0]->idsiswa,
-            'idpetugas' => $pustakawan->id_user,
-            'waktu' => Carbon::now()->subDays(2),
-            'tgl_batas_kembali' => Carbon::now()->addDays(5)->toDateString(),
-            'tgl_dikembalikan' => null,
-            'status' => 'dipinjam',
-            'total_denda' => 0,
-        ]);
-        PinjamDetail::create([
-            'idpinjam' => $pinjam1->idpinjam,
-            'idbukudetail' => $allEksemplar[0]->idbukudetail,
-        ]);
-        // Kurangi stok_tersedia buku bersangkutan
-        $allEksemplar[0]->buku->decrement('stok_tersedia');
-
-        // Transaksi 2: Status 'terlambat' (dengan denda Rp 8.000)
-        $pinjam2 = Pinjam::create([
-            'idsiswa' => $createdSiswa[1]->idsiswa,
-            'idpetugas' => $pustakawan->id_user,
-            'waktu' => Carbon::now()->subDays(15),
-            'tgl_batas_kembali' => Carbon::now()->subDays(8)->toDateString(),
-            'tgl_dikembalikan' => null,
-            'status' => 'terlambat',
-            'total_denda' => 8000.00,
-        ]);
-        PinjamDetail::create([
-            'idpinjam' => $pinjam2->idpinjam,
-            'idbukudetail' => $allEksemplar[3]->idbukudetail,
-        ]);
-        $allEksemplar[3]->buku->decrement('stok_tersedia');
-
-        // Transaksi 3: Status 'dikembalikan' (selesai tepat waktu tanpa denda)
-        $pinjam3 = Pinjam::create([
-            'idsiswa' => $createdSiswa[2]->idsiswa,
-            'idpetugas' => $pustakawan->id_user,
-            'waktu' => Carbon::now()->subDays(10),
-            'tgl_batas_kembali' => Carbon::now()->subDays(3)->toDateString(),
-            'tgl_dikembalikan' => Carbon::now()->subDays(4)->toDateString(),
-            'status' => 'dikembalikan',
-            'total_denda' => 0,
-        ]);
-        PinjamDetail::create([
-            'idpinjam' => $pinjam3->idpinjam,
-            'idbukudetail' => $allEksemplar[6]->idbukudetail,
-        ]);
-
-        // 7. Data 3 Berita Sekolah Kontekstual MI Roudotutta'lim
+        // 6. Data 3 Berita Sekolah Kontekstual MI Roudotutta'lim
         $beritaData = [
             [
                 'judul' => 'Peringatan Maulid Nabi Muhammad SAW di MI Roudotutta\'lim Penuh Khidmat',
