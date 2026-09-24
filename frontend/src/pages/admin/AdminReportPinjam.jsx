@@ -204,7 +204,9 @@ export default function AdminReportPinjam() {
   const formatDate = (dateStr) => {
     if (!dateStr) return '-'
     try {
-      return new Date(dateStr).toLocaleDateString('id-ID', {
+      const d = new Date(dateStr)
+      if (isNaN(d.getTime())) return dateStr
+      return d.toLocaleDateString('id-ID', {
         day: 'numeric',
         month: 'short',
         year: 'numeric',
@@ -212,6 +214,34 @@ export default function AdminReportPinjam() {
     } catch {
       return dateStr
     }
+  }
+
+  const formatTime = (dateStr) => {
+    if (!dateStr) return ''
+    try {
+      const d = new Date(dateStr)
+      if (isNaN(d.getTime())) return ''
+      return d.toLocaleTimeString('id-ID', {
+        hour: '2-digit',
+        minute: '2-digit',
+      })
+    } catch {
+      return ''
+    }
+  }
+
+  const isOverdue = (dueDateStr, status) => {
+    if (status !== 'dipinjam' || !dueDateStr) return false
+    const due = new Date(dueDateStr)
+    due.setHours(23, 59, 59, 999)
+    return new Date() > due
+  }
+
+  const isDueToday = (dueDateStr, status) => {
+    if (status !== 'dipinjam' || !dueDateStr) return false
+    const today = new Date().toISOString().split('T')[0]
+    const due = new Date(dueDateStr).toISOString().split('T')[0]
+    return today === due
   }
 
   const handlePrint = () => {
@@ -222,32 +252,72 @@ export default function AdminReportPinjam() {
     switch (status) {
       case 'dipinjam':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 whitespace-nowrap shadow-xs">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
             Sedang Dipinjam
           </span>
         )
       case 'dikembalikan':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200">
-            <span className="w-1.5 h-1.5 rounded-full bg-slate-500"></span>
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200 whitespace-nowrap">
+            <span className="material-symbols-outlined text-[14px] text-slate-500">done_all</span>
             Sudah Kembali
           </span>
         )
       case 'terlambat':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">
-            <span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200 whitespace-nowrap">
+            <span className="material-symbols-outlined text-[14px] text-rose-500">timer_off</span>
             Terlambat
           </span>
         )
       default:
         return (
-          <span className="inline-block px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600">
+          <span className="inline-block px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600 whitespace-nowrap">
             {status}
           </span>
         )
     }
+  }
+
+  // Render Date with Overflow-Proof Pill Badging
+  const renderBatasKembali = (dueDateStr, status) => {
+    if (!dueDateStr) return <span className="text-slate-400">-</span>
+    const formatted = formatDate(dueDateStr)
+
+    if (status === 'dipinjam') {
+      if (isOverdue(dueDateStr, status)) {
+        return (
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200 whitespace-nowrap shadow-xs">
+            <span className="material-symbols-outlined text-[14px] text-rose-600 shrink-0">warning</span>
+            <span>{formatted}</span>
+            <span className="text-[10px] bg-rose-200/90 text-rose-900 px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">
+              Telat
+            </span>
+          </span>
+        )
+      }
+      if (isDueToday(dueDateStr, status)) {
+        return (
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200 whitespace-nowrap shadow-xs">
+            <span className="material-symbols-outlined text-[14px] text-amber-600 shrink-0">schedule</span>
+            <span>Hari Ini ({formatted})</span>
+          </span>
+        )
+      }
+      return (
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 border border-slate-200 whitespace-nowrap">
+          <span className="material-symbols-outlined text-[14px] text-slate-400 shrink-0">event</span>
+          <span>{formatted}</span>
+        </span>
+      )
+    }
+
+    return (
+      <span className="inline-flex items-center gap-1 text-xs text-slate-500 whitespace-nowrap">
+        <span>{formatted}</span>
+      </span>
+    )
   }
 
   // Handle Add Copy in Mandiri Mode
@@ -377,13 +447,13 @@ export default function AdminReportPinjam() {
       {/* Toast Notification */}
       {toast && (
         <div
-          className={`fixed bottom-6 right-6 z-50 flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg border text-sm animate-fade-in ${
+          className={`fixed bottom-6 right-6 z-[120] flex items-center gap-3 px-4 py-3 rounded-xl shadow-xl border text-sm animate-fade-in ${
             toast.type === 'error'
               ? 'bg-rose-50 border-rose-200 text-rose-800'
               : 'bg-emerald-50 border-emerald-200 text-emerald-800'
           }`}
         >
-          <span className="material-symbols-outlined text-[20px]">
+          <span className="material-symbols-outlined text-[20px] shrink-0">
             {toast.type === 'error' ? 'error' : 'check_circle'}
           </span>
           <span className="font-medium">{toast.message}</span>
@@ -416,7 +486,7 @@ export default function AdminReportPinjam() {
             Sirkulasi &amp; Data Peminjaman
           </h2>
           <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
-            Manajemen transaksi peminjaman (mandiri &amp; per kelas), riwayat pengembalian, status operasional, dan denda.
+            Manajemen sirkulasi buku madrasah, transaksi peminjaman mandiri &amp; per kelas, riwayat pengembalian, dan denda.
           </p>
         </div>
 
@@ -468,6 +538,18 @@ export default function AdminReportPinjam() {
         </div>
 
         <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-xs flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-purple-50 border border-purple-100 text-purple-700 flex items-center justify-center shrink-0">
+            <span className="material-symbols-outlined text-[20px]">groups</span>
+          </div>
+          <div>
+            <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block">
+              Paket Kelas
+            </span>
+            <span className="text-xl font-bold text-slate-900">{metrics.total_kolektif || 0}</span>
+          </div>
+        </div>
+
+        <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-xs flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-teal-50 border border-teal-100 text-teal-700 flex items-center justify-center shrink-0">
             <span className="material-symbols-outlined text-[20px]">check_circle</span>
           </div>
@@ -476,18 +558,6 @@ export default function AdminReportPinjam() {
               Sudah Kembali
             </span>
             <span className="text-xl font-bold text-slate-900">{metrics.sudah_kembali}</span>
-          </div>
-        </div>
-
-        <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-xs flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-rose-50 border border-rose-100 text-rose-700 flex items-center justify-center shrink-0">
-            <span className="material-symbols-outlined text-[20px]">timer_off</span>
-          </div>
-          <div>
-            <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block">
-              Terlambat
-            </span>
-            <span className="text-xl font-bold text-slate-900">{metrics.terlambat}</span>
           </div>
         </div>
 
@@ -506,11 +576,114 @@ export default function AdminReportPinjam() {
         </div>
       </div>
 
-      {/* Filter Bar */}
-      <div className="rounded-2xl border border-slate-200 bg-white shadow-xs p-4 sm:p-5 no-print space-y-3">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-          {/* Search */}
-          <div className="relative lg:col-span-2">
+      {/* Filter Bar & Quick Status Tabs */}
+      <div className="rounded-2xl border border-slate-200 bg-white shadow-xs p-4 sm:p-5 no-print space-y-4">
+        {/* Quick Filter Pill Tabs */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar text-xs">
+          <button
+            type="button"
+            onClick={() => {
+              setStatusFilter('')
+              setTipeFilter('')
+              setPage(1)
+            }}
+            className={`px-3 py-1.5 rounded-lg font-medium whitespace-nowrap transition-all flex items-center gap-1.5 ${
+              !statusFilter && !tipeFilter
+                ? 'bg-slate-900 text-white shadow-xs'
+                : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+            }`}
+          >
+            <span>Semua</span>
+            <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-slate-700/50 text-slate-200 font-semibold">
+              {metrics.total_transaksi}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setStatusFilter('dipinjam')
+              setTipeFilter('')
+              setPage(1)
+            }}
+            className={`px-3 py-1.5 rounded-lg font-medium whitespace-nowrap transition-all flex items-center gap-1.5 ${
+              statusFilter === 'dipinjam'
+                ? 'bg-emerald-600 text-white shadow-xs'
+                : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+            }`}
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>Sedang Dipinjam</span>
+            <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-emerald-800/40 text-emerald-100 font-semibold">
+              {metrics.dipinjam_aktif}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setTipeFilter('kolektif')
+              setStatusFilter('')
+              setPage(1)
+            }}
+            className={`px-3 py-1.5 rounded-lg font-medium whitespace-nowrap transition-all flex items-center gap-1.5 ${
+              tipeFilter === 'kolektif'
+                ? 'bg-indigo-600 text-white shadow-xs'
+                : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+            }`}
+          >
+            <span className="material-symbols-outlined text-[14px]">groups</span>
+            <span>Paket Kelas</span>
+            <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-indigo-800/40 text-indigo-100 font-semibold">
+              {metrics.total_kolektif || 0}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setStatusFilter('dikembalikan')
+              setTipeFilter('')
+              setPage(1)
+            }}
+            className={`px-3 py-1.5 rounded-lg font-medium whitespace-nowrap transition-all flex items-center gap-1.5 ${
+              statusFilter === 'dikembalikan'
+                ? 'bg-teal-600 text-white shadow-xs'
+                : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+            }`}
+          >
+            <span className="material-symbols-outlined text-[14px]">check</span>
+            <span>Sudah Kembali</span>
+            <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-teal-800/40 text-teal-100 font-semibold">
+              {metrics.sudah_kembali}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setStatusFilter('terlambat')
+              setTipeFilter('')
+              setPage(1)
+            }}
+            className={`px-3 py-1.5 rounded-lg font-medium whitespace-nowrap transition-all flex items-center gap-1.5 ${
+              statusFilter === 'terlambat'
+                ? 'bg-rose-600 text-white shadow-xs'
+                : 'bg-white text-slate-600 hover:bg-slate-100 border border-rose-200'
+            }`}
+          >
+            <span className="material-symbols-outlined text-[14px]">warning</span>
+            <span>Terlambat</span>
+            <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-rose-800/40 text-rose-100 font-semibold">
+              {metrics.terlambat}
+            </span>
+          </button>
+        </div>
+
+        {/* Search & Date Controls Bar */}
+        <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 pt-1 border-t border-slate-100">
+          {/* Search Input */}
+          <div className="relative flex-1 max-w-lg">
             <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">
               search
             </span>
@@ -522,74 +695,47 @@ export default function AdminReportPinjam() {
                 setPage(1)
               }}
               placeholder="Cari siswa, NIS, judul buku, atau kode barcode..."
-              className="w-full pl-9 pr-3 py-2 text-xs sm:text-sm rounded-lg border border-slate-300 bg-white text-slate-800 placeholder-slate-400 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
+              className="w-full pl-9 pr-3 py-2 text-xs sm:text-sm rounded-xl border border-slate-300 bg-white text-slate-800 placeholder-slate-400 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
             />
           </div>
 
-          {/* Status Filter */}
-          <div>
-            <select
-              value={statusFilter}
-              onChange={(e) => {
-                setStatusFilter(e.target.value)
-                setPage(1)
-              }}
-              className="w-full px-3 py-2 text-xs sm:text-sm rounded-lg border border-slate-300 bg-white text-slate-700 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
-            >
-              <option value="">Semua Status</option>
-              <option value="dipinjam">Sedang Dipinjam</option>
-              <option value="dikembalikan">Sudah Kembali</option>
-              <option value="terlambat">Terlambat</option>
-            </select>
-          </div>
+          {/* Date Range & Reset Filters */}
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="flex items-center gap-2 bg-slate-50 border border-slate-300 rounded-xl px-3 py-1.5">
+              <span className="material-symbols-outlined text-slate-400 text-[16px]">calendar_month</span>
+              <span className="text-[11px] font-medium text-slate-500 whitespace-nowrap">Rentang:</span>
+              <input
+                type="date"
+                value={tglMulai}
+                onChange={(e) => {
+                  setTglMulai(e.target.value)
+                  setPage(1)
+                }}
+                className="bg-transparent text-xs text-slate-700 outline-none cursor-pointer"
+                title="Dari Tanggal Pinjam"
+              />
+              <span className="text-slate-400 text-xs">-</span>
+              <input
+                type="date"
+                value={tglSelesai}
+                onChange={(e) => {
+                  setTglSelesai(e.target.value)
+                  setPage(1)
+                }}
+                className="bg-transparent text-xs text-slate-700 outline-none cursor-pointer"
+                title="Sampai Tanggal Pinjam"
+              />
+            </div>
 
-          {/* Tipe Filter (Kolektif vs Mandiri) */}
-          <div>
-            <select
-              value={tipeFilter}
-              onChange={(e) => {
-                setTipeFilter(e.target.value)
-                setPage(1)
-              }}
-              className="w-full px-3 py-2 text-xs sm:text-sm rounded-lg border border-slate-300 bg-white text-slate-700 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
-            >
-              <option value="">Semua Tipe Pinjaman</option>
-              <option value="kolektif">👥 Paket Per Kelas (Kolektif)</option>
-              <option value="mandiri">👤 Mandiri (Perorangan)</option>
-            </select>
-          </div>
-
-          {/* Date range & Reset */}
-          <div className="flex items-center gap-1.5">
-            <input
-              type="date"
-              value={tglMulai}
-              onChange={(e) => {
-                setTglMulai(e.target.value)
-                setPage(1)
-              }}
-              title="Dari Tanggal Pinjam"
-              className="w-full px-2.5 py-2 text-xs rounded-lg border border-slate-300 bg-white text-slate-700 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
-            />
-            <span className="text-slate-400 text-xs">-</span>
-            <input
-              type="date"
-              value={tglSelesai}
-              onChange={(e) => {
-                setTglSelesai(e.target.value)
-                setPage(1)
-              }}
-              title="Sampai Tanggal Pinjam"
-              className="w-full px-2.5 py-2 text-xs rounded-lg border border-slate-300 bg-white text-slate-700 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
-            />
             {(search || statusFilter || tipeFilter || tglMulai || tglSelesai) && (
               <button
                 type="button"
                 onClick={handleResetFilter}
-                className="px-2.5 py-2 rounded-lg border border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100 text-xs font-semibold shrink-0"
+                className="px-3 py-2 rounded-xl border border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100 text-xs font-semibold flex items-center gap-1 transition-all active:scale-[0.98]"
                 title="Reset Filter"
               >
-                Reset
+                <span className="material-symbols-outlined text-[14px]">close</span>
+                <span>Reset</span>
               </button>
             )}
           </div>
@@ -619,14 +765,14 @@ export default function AdminReportPinjam() {
             <thead className="bg-slate-50 text-slate-700 font-medium border-b border-slate-200 text-xs uppercase tracking-wider print:bg-slate-100">
               <tr>
                 <th className="py-3.5 px-4 w-12 text-center">No</th>
-                <th className="py-3.5 px-4">Peminjam (Siswa)</th>
-                <th className="py-3.5 px-4">Buku &amp; Eksemplar</th>
-                <th className="py-3.5 px-4 w-28">Tgl Pinjam</th>
-                <th className="py-3.5 px-4 w-28">Batas Kembali</th>
-                <th className="py-3.5 px-4 w-28">Tgl Kembali</th>
-                <th className="py-3.5 px-4 w-32 text-center">Status</th>
-                <th className="py-3.5 px-4 w-28 text-right font-mono">Denda</th>
-                <th className="py-3.5 px-4 w-36 text-center no-print">Aksi</th>
+                <th className="py-3.5 px-4 min-w-[200px]">Peminjam (Siswa)</th>
+                <th className="py-3.5 px-4 min-w-[260px]">Buku &amp; Eksemplar</th>
+                <th className="py-3.5 px-4 min-w-[130px] whitespace-nowrap">Tgl Pinjam</th>
+                <th className="py-3.5 px-4 min-w-[160px] whitespace-nowrap">Batas Kembali</th>
+                <th className="py-3.5 px-4 min-w-[130px] whitespace-nowrap">Tgl Kembali</th>
+                <th className="py-3.5 px-4 min-w-[140px] text-center whitespace-nowrap">Status</th>
+                <th className="py-3.5 px-4 min-w-[110px] text-right font-mono whitespace-nowrap">Denda</th>
+                <th className="py-3.5 px-4 min-w-[150px] text-center no-print whitespace-nowrap">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200 text-xs sm:text-sm">
@@ -687,13 +833,13 @@ export default function AdminReportPinjam() {
                             <div className="font-medium text-slate-800 line-clamp-1">
                               {firstBookTitle}
                             </div>
-                            <div className="flex items-center gap-1.5 mt-1">
-                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                            <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[11px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200 whitespace-nowrap">
                                 <span className="material-symbols-outlined text-[13px]">groups</span>
                                 Paket Kelas ({details.length} Buku)
                               </span>
-                              <span className="text-[10px] text-slate-400 font-mono">
-                                [Contoh: {details[0]?.buku_detail?.kodebukudetail || '-'}]
+                              <span className="text-[10px] text-slate-400 font-mono whitespace-nowrap">
+                                [{details[0]?.buku_detail?.kodebukudetail || '-'}]
                               </span>
                             </div>
                           </div>
@@ -710,7 +856,7 @@ export default function AdminReportPinjam() {
                               </div>
                             ))}
                             <div className="mt-1">
-                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium bg-slate-100 text-slate-600">
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium bg-slate-100 text-slate-600 whitespace-nowrap">
                                 <span className="material-symbols-outlined text-[12px]">person</span>
                                 Mandiri ({details.length} Buku)
                               </span>
@@ -719,23 +865,31 @@ export default function AdminReportPinjam() {
                         )}
                       </td>
 
-                      <td className="py-3.5 px-4 text-xs text-slate-600">
-                        {formatDate(item.waktu)}
+                      <td className="py-3.5 px-4 whitespace-nowrap">
+                        <div className="text-xs text-slate-700 font-medium">{formatDate(item.waktu)}</div>
+                        <div className="text-[10px] text-slate-400">{formatTime(item.waktu)}</div>
                       </td>
 
-                      <td className="py-3.5 px-4 text-xs font-medium text-slate-700">
-                        {formatDate(item.tgl_batas_kembali)}
+                      <td className="py-3.5 px-4 whitespace-nowrap">
+                        {renderBatasKembali(item.tgl_batas_kembali, item.status)}
                       </td>
 
-                      <td className="py-3.5 px-4 text-xs text-slate-600">
-                        {formatDate(item.tgl_dikembalikan)}
+                      <td className="py-3.5 px-4 whitespace-nowrap">
+                        {item.tgl_dikembalikan ? (
+                          <div className="text-xs text-emerald-700 font-medium flex items-center gap-1">
+                            <span className="material-symbols-outlined text-[14px]">check</span>
+                            <span>{formatDate(item.tgl_dikembalikan)}</span>
+                          </div>
+                        ) : (
+                          <span className="text-xs text-slate-400 italic">Belum Kembali</span>
+                        )}
                       </td>
 
-                      <td className="py-3.5 px-4 text-center">
+                      <td className="py-3.5 px-4 text-center whitespace-nowrap">
                         {getStatusBadge(item.status)}
                       </td>
 
-                      <td className="py-3.5 px-4 text-right font-mono text-xs font-semibold">
+                      <td className="py-3.5 px-4 text-right font-mono text-xs font-semibold whitespace-nowrap">
                         {fine > 0 ? (
                           <span className="text-rose-600">{formatRupiah(fine)}</span>
                         ) : (
@@ -743,7 +897,7 @@ export default function AdminReportPinjam() {
                         )}
                       </td>
 
-                      <td className="py-3.5 px-4 text-center no-print">
+                      <td className="py-3.5 px-4 text-center no-print whitespace-nowrap">
                         <div className="flex items-center justify-center gap-1.5">
                           {item.status === 'dipinjam' && (
                             <button
@@ -815,10 +969,10 @@ export default function AdminReportPinjam() {
 
       {/* MODAL: Tambah Peminjaman Baru (Kolektif vs Mandiri) */}
       {isCreateModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fade-in no-print overflow-y-auto">
-          <div className="bg-white rounded-2xl shadow-xl border border-slate-200 w-full max-w-2xl my-8 overflow-hidden">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in no-print overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-2xl my-8 overflow-hidden">
             {/* Modal Header */}
-            <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/50">
+            <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/70">
               <div>
                 <h3 className="font-bold text-base text-slate-900">
                   Transaksi Peminjaman Buku Baru
@@ -894,10 +1048,10 @@ export default function AdminReportPinjam() {
                       value={siswaSearch}
                       onChange={(e) => setSiswaSearch(e.target.value)}
                       placeholder="Ketik NIS atau Nama Siswa..."
-                      className="w-full pl-9 pr-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
+                      className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all text-sm"
                     />
                     {searchingSiswa && (
-                      <span className="absolute right-3 top-2.5 text-xs text-slate-400 animate-pulse">
+                      <span className="absolute right-3 top-3 text-xs text-slate-400 animate-pulse">
                         Mencari...
                       </span>
                     )}
@@ -925,7 +1079,7 @@ export default function AdminReportPinjam() {
                                   NIS: {s.nis}
                                 </div>
                               </div>
-                              <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-100">
+                              <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-100 whitespace-nowrap">
                                 Kelas {kls}
                               </span>
                             </button>
@@ -937,7 +1091,7 @@ export default function AdminReportPinjam() {
                 ) : (
                   <div className="p-3.5 rounded-xl border border-emerald-200 bg-emerald-50/70 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-xl bg-emerald-600 text-white font-bold text-sm flex items-center justify-center shrink-0">
+                      <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white font-bold text-sm flex items-center justify-center shrink-0">
                         {selectedSiswa.nama.charAt(0)}
                       </div>
                       <div>
@@ -974,7 +1128,7 @@ export default function AdminReportPinjam() {
                     <select
                       value={selectedBukuId}
                       onChange={(e) => setSelectedBukuId(e.target.value)}
-                      className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
+                      className="w-full px-3 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all text-sm"
                     >
                       <option value="">-- Pilih Buku Paket --</option>
                       {kolektifBooks.map((b) => (
@@ -985,12 +1139,12 @@ export default function AdminReportPinjam() {
                     </select>
 
                     {selectedBukuObject && (
-                      <div className="text-[11px] text-slate-500 bg-slate-50 p-2.5 rounded-lg border border-slate-200 flex items-center justify-between">
+                      <div className="text-[11px] text-slate-500 bg-slate-50 p-2.5 rounded-xl border border-slate-200 flex items-center justify-between">
                         <span>
                           Pengarang: <strong>{selectedBukuObject.penulis || '-'}</strong> | Penerbit:{' '}
                           <strong>{selectedBukuObject.penerbit || '-'}</strong>
                         </span>
-                        <span className="font-semibold text-emerald-700">
+                        <span className="font-semibold text-emerald-700 whitespace-nowrap">
                           Stok Siap: {selectedBukuObject.stok_tersedia} buku
                         </span>
                       </div>
@@ -1008,7 +1162,7 @@ export default function AdminReportPinjam() {
                         max={selectedBukuObject?.stok_tersedia || 100}
                         value={jumlahBuku}
                         onChange={(e) => setJumlahBuku(e.target.value)}
-                        className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
+                        className="w-full px-3 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all text-sm font-mono"
                       />
                       <span className="text-[10px] text-slate-400 block">
                         Contoh: 25 eksemplar untuk satu rombel kelas.
@@ -1023,7 +1177,7 @@ export default function AdminReportPinjam() {
                         type="date"
                         value={tglBatasKembaliKolektif}
                         onChange={(e) => setTglBatasKembaliKolektif(e.target.value)}
-                        className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
+                        className="w-full px-3 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all text-sm font-sans"
                       />
                       <span className="text-[10px] text-slate-400 block">
                         Default: Hari ini (setelah jam KBM selesai).
@@ -1040,13 +1194,13 @@ export default function AdminReportPinjam() {
                       value={keperluan}
                       onChange={(e) => setKeperluan(e.target.value)}
                       placeholder="Contoh: KBM Tematik Tema 1 - Jam Ke 2-3 (Ibu Siti)"
-                      className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
+                      className="w-full px-3 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all text-sm"
                     />
                   </div>
 
                   {/* Summary Callout */}
                   {selectedSiswa && selectedBukuObject && (
-                    <div className="p-3 rounded-xl bg-indigo-50 border border-indigo-200 text-xs text-indigo-900 flex items-start gap-2">
+                    <div className="p-3.5 rounded-xl bg-indigo-50 border border-indigo-200 text-xs text-indigo-900 flex items-start gap-2">
                       <span className="material-symbols-outlined text-[18px] text-indigo-600 shrink-0 mt-0.5">
                         info
                       </span>
@@ -1081,12 +1235,12 @@ export default function AdminReportPinjam() {
                           }
                         }}
                         placeholder="Scan / ketik kode barcode (e.g. BK-1-001)..."
-                        className="flex-1 px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all font-mono"
+                        className="flex-1 px-3 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all font-mono text-sm"
                       />
                       <button
                         type="button"
                         onClick={() => handleAddCopy()}
-                        className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-900 text-white font-semibold text-xs"
+                        className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-semibold text-xs shadow-xs transition-all active:scale-[0.98]"
                       >
                         + Tambah
                       </button>
@@ -1102,7 +1256,7 @@ export default function AdminReportPinjam() {
                               e.target.value = ''
                             }
                           }}
-                          className="w-full px-3 py-1.5 text-xs rounded-lg border border-slate-200 bg-slate-50 text-slate-600"
+                          className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 bg-slate-50 text-slate-600 outline-none"
                         >
                           <option value="">Atau pilih cepat dari buku tersedia...</option>
                           {catalogBooks.map((b) =>
@@ -1125,7 +1279,7 @@ export default function AdminReportPinjam() {
                         Daftar Buku Terpilih ({selectedCopies.length} / 3):
                       </div>
                       {selectedCopies.length === 0 ? (
-                        <div className="p-3 text-center rounded-lg border border-dashed border-slate-300 text-xs text-slate-400">
+                        <div className="p-3 text-center rounded-xl border border-dashed border-slate-300 text-xs text-slate-400">
                           Belum ada buku yang ditambahkan.
                         </div>
                       ) : (
@@ -1133,7 +1287,7 @@ export default function AdminReportPinjam() {
                           {selectedCopies.map((code, idx) => (
                             <div
                               key={idx}
-                              className="flex items-center justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200"
+                              className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-200"
                             >
                               <div className="flex items-center gap-2">
                                 <span className="material-symbols-outlined text-[16px] text-emerald-600">
@@ -1165,7 +1319,7 @@ export default function AdminReportPinjam() {
                       type="date"
                       value={tglBatasKembaliMandiri}
                       onChange={(e) => setTglBatasKembaliMandiri(e.target.value)}
-                      className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
+                      className="w-full px-3 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all text-sm font-sans"
                     />
                     <span className="text-[10px] text-slate-400 block">
                       Standar pinjam mandiri: 7 hari kalender.
@@ -1179,14 +1333,14 @@ export default function AdminReportPinjam() {
                 <button
                   type="button"
                   onClick={handleCloseCreateModal}
-                  className="px-4 py-2 rounded-xl border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold text-xs transition-all"
+                  className="px-4 py-2.5 rounded-xl border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold text-xs transition-all"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={submittingCreate}
-                  className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-xs transition-all disabled:opacity-50 flex items-center gap-2"
+                  className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-xs transition-all disabled:opacity-50 flex items-center gap-2 active:scale-[0.98]"
                 >
                   {submittingCreate && (
                     <span className="material-symbols-outlined text-[16px] animate-spin">
@@ -1207,8 +1361,8 @@ export default function AdminReportPinjam() {
 
       {/* MODAL: Konfirmasi Pengembalian Buku */}
       {returnModalLoan && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fade-in no-print">
-          <div className="bg-white rounded-2xl shadow-xl border border-slate-200 w-full max-w-md p-6 space-y-4">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in no-print">
+          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md p-6 space-y-4">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
                 <span className="material-symbols-outlined text-[28px]">assignment_return</span>
@@ -1261,7 +1415,7 @@ export default function AdminReportPinjam() {
               <button
                 type="button"
                 onClick={() => setReturnModalLoan(null)}
-                className="px-4 py-2 rounded-xl border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold text-xs"
+                className="px-4 py-2.5 rounded-xl border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold text-xs transition-all"
               >
                 Batal
               </button>
@@ -1269,7 +1423,7 @@ export default function AdminReportPinjam() {
                 type="button"
                 disabled={submittingReturn}
                 onClick={handleConfirmReturn}
-                className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs flex items-center gap-1.5 disabled:opacity-50"
+                className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs flex items-center gap-1.5 disabled:opacity-50 transition-all active:scale-[0.98]"
               >
                 {submittingReturn && (
                   <span className="material-symbols-outlined text-[16px] animate-spin">
@@ -1285,8 +1439,8 @@ export default function AdminReportPinjam() {
 
       {/* MODAL: Detail Transaksi Peminjaman */}
       {selectedLoan && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fade-in no-print">
-          <div className="bg-white rounded-2xl shadow-xl border border-slate-200 w-full max-w-lg p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in no-print">
+          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-lg p-6 space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between pb-3 border-b border-slate-200">
               <div>
                 <h3 className="font-bold text-base text-slate-900">Detail Peminjaman Buku</h3>
@@ -1297,7 +1451,7 @@ export default function AdminReportPinjam() {
               <button
                 type="button"
                 onClick={() => setSelectedLoan(null)}
-                className="text-slate-400 hover:text-slate-600"
+                className="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600 transition-colors"
               >
                 ✕
               </button>
@@ -1324,11 +1478,11 @@ export default function AdminReportPinjam() {
                     Buku yang Dipinjam ({selectedLoan.pinjam_details?.length || 0} Eksemplar)
                   </div>
                   {selectedLoan.pinjam_details?.length > 3 ? (
-                    <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                    <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200 whitespace-nowrap">
                       Paket Per Kelas
                     </span>
                   ) : (
-                    <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600">
+                    <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600 whitespace-nowrap">
                       Mandiri
                     </span>
                   )}
@@ -1393,7 +1547,7 @@ export default function AdminReportPinjam() {
                   onClick={() => {
                     setReturnModalLoan(selectedLoan)
                   }}
-                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs rounded-xl flex items-center gap-1.5 transition-all"
+                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs rounded-xl flex items-center gap-1.5 transition-all active:scale-[0.98]"
                 >
                   <span className="material-symbols-outlined text-[16px]">assignment_return</span>
                   <span>Kembalikan Buku Sekarang</span>
@@ -1405,7 +1559,7 @@ export default function AdminReportPinjam() {
               <button
                 type="button"
                 onClick={() => setSelectedLoan(null)}
-                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-xl"
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-xl transition-all"
               >
                 Tutup
               </button>
